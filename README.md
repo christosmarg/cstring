@@ -20,9 +20,9 @@ along with your other files.
 * `cstring_front`: Returns the first character of the string
 * `cstring_back`: Returns the last character of the string
 * `cstring_empty`: Checks if the string is empty
-* `cstring_len`: Returns the length of the string
 * `cstring_copy`: Makes a copy of a given `const char *`
 * `cstring_resize`: Resizes the array stored inside the string `struct`
+* `cstring_len`: Returns the length of the string
 * `cstring_equals`: True if the strings are equal
 * `cstring_not_equals`: True if the strings are not equal
 * `cstring_greater`: True if the left hand string is greater than the right hand one
@@ -34,7 +34,7 @@ along with your other files.
 
 A recommended way of using this string is to **always** call the `cstring_delete` function when you're done
 working with it, in order not to cause any memory leaks, as there's no *destructor* to do it for you.
-Open `test.c` for more.
+See `test.c` for more.
 
 ```c
 #include <stdio.h>

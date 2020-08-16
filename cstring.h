@@ -7,6 +7,7 @@
 typedef struct {
     char   *str;
     size_t  len;
+    size_t  capacity;
 } cstring;
 
 extern cstring cstring_init(const char *s);
@@ -22,11 +23,11 @@ extern int     cstring_exists(const cstring *cs, const char *s);
 extern char    cstring_front(const cstring *cs);
 extern char    cstring_back(const cstring *cs);
 extern int     cstring_empty(const cstring *cs);
-extern size_t  cstring_len(const cstring *cs);
 extern char   *cstring_copy(const char *s);
 extern void    cstring_resize(cstring *cs, size_t n);
 
 /* might be useless */
+extern size_t  cstring_len(const cstring *cs);
 extern int     cstring_equals(const cstring *lhs, const cstring *rhs);
 extern int     cstring_not_equals(const cstring *lhs, const cstring *rhs);
 extern int     cstring_greater(const cstring *lhs, const cstring *rhs);
