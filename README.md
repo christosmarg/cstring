@@ -1,9 +1,17 @@
 # cstring
 
+A simple and lightweight string library for C.
+
 ## Usage
 
 Simply include the source files in your projects and compile them
-along with your other files.
+along with your other files.  
+
+When using this library, you must to **always** call the `cstring_init` and `cstring_delete` 
+functions whenever you want to make a new instance of `cstring` and stop using it respectively,
+in order not to cause any memory leaks, as there's no *constructor* and *destructor* to do it for you.  
+
+The recommended way of initializing an empty string is by doing `cstring foo = cstring_init("")`.
 
 ## Functions
 
@@ -22,7 +30,6 @@ along with your other files.
 * `cstring_empty`: Checks if the string is empty
 * `cstring_copy`: Makes a copy of a given `const char *`
 * `cstring_resize`: Resizes the array stored inside the string `struct`
-* `cstring_len`: Returns the length of the string
 * `cstring_equals`: True if the strings are equal
 * `cstring_not_equals`: True if the strings are not equal
 * `cstring_greater`: True if the left hand string is greater than the right hand one
@@ -32,8 +39,6 @@ along with your other files.
 
 ## Example
 
-A recommended way of using this string is to **always** call the `cstring_delete` function when you're done
-working with it, in order not to cause any memory leaks, as there's no *destructor* to do it for you.
 See `test.c` for more.
 
 ```c
@@ -43,8 +48,8 @@ See `test.c` for more.
 int
 main(int argc, char **argv)
 {
-    cstring s = cstring_init("Example string");
-    cstring_append(&s, "more text...");
+    cstring s = cstring_init("Foo");
+    cstring_append(&s, "Bar.");
     printf("%s\n", s.str);
     cstring_delete(&s);
 

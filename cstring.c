@@ -13,13 +13,10 @@ cstring_init(const char *s)
 void
 cstring_delete(cstring *cs)
 {
-    if (!cstring_empty(cs))
-    {
-        free(cs->str);
-        cs->str      = NULL;
-        cs->len      = 0;
-        cs->capacity = 0;
-    }
+    if (!cstring_empty(cs)) free(cs->str);
+    cs->str      = NULL;
+    cs->len      = 0;
+    cs->capacity = 0;
 }
 
 void
@@ -35,14 +32,13 @@ cstring_assign(cstring *cs, const char *s)
 void
 cstring_append(cstring *cs, const char *s)
 {
-    size_t newlen = cs->len + strlen(s);
     if (!cstring_empty(cs))
     {
-        if (newlen >= cs->capacity)
-            cstring_resize(cs, newlen << 1);
+        size_t newlen = cs->len + strlen(s);
+        if (newlen >= cs->capacity) cstring_resize(cs, newlen << 1);
         strcat(cs->str, s);
+        cs->len = newlen;
     }
-    cs->len = newlen;
 }
 
 void
@@ -50,17 +46,17 @@ cstring_insert(cstring *cs, const char *s, size_t i)
 {
     if (!cstring_empty(cs) && i < cs->len)
     {
-        /* TODO minimize function calls */
+        size_t slen = strlen(s);
+        size_t newlen = cs->len + slen;
         char *tmp1 = (char *)malloc(i + 1);
         char *tmp2 = (char *)malloc(cs->len - i + 1);
         memcpy(tmp1, cs->str, i + 1);
         memcpy(tmp2, cs->str + i, cs->len + 1);
-        if (cs->len + strlen(s) >= cs->capacity)
-            cstring_resize(cs, (cs->len + strlen(s)) << 1);
+        if (newlen >= cs->capacity) cstring_resize(cs, newlen << 1);
         memcpy(cs->str, tmp1, i + 1);
-        memcpy(cs->str + i, s, strlen(s) + 1);
-        memcpy(cs->str + strlen(s) + i, tmp2, cs->len - i + 1);
-        cs->len = cstring_len(cs);
+        memcpy(cs->str + i, s, slen + 1);
+        memcpy(cs->str + slen + i, tmp2, cs->len - i + 1);
+        cs->len = newlen;
         cs->str[cs->len] = '\0';
         free(tmp1);
         free(tmp2);
@@ -70,9 +66,8 @@ cstring_insert(cstring *cs, const char *s, size_t i)
 void
 cstring_push_back(cstring *cs, char c)
 {
-    if (cs->len + 1 >= cs->capacity)
-        cstring_resize(cs, (cs->len + 1) << 1);
-    cs->str[cs->len] = c;
+    if (cs->len + 1 >= cs->capacity) cstring_resize(cs, (cs->len + 1) << 1);
+    cs->str[cs->len]   = c;
     cs->str[++cs->len] = '\0';
 }
 
@@ -84,9 +79,8 @@ cstring_pop_back(cstring *cs)
         char *tmp = (char *)malloc(cs->len);
         memcpy(tmp, cs->str, cs->len);
         free(cs->str);
-        tmp[cs->len - 1] = '\0';
+        tmp[cs->len--] = '\0';
         cs->str = tmp;
-        cs->len--;
     }
 }
 
@@ -100,9 +94,9 @@ void
 cstring_clear(cstring *cs)
 {
     if (!cstring_empty(cs)) free(cs->str);
-    cs->str = (char *)malloc(1);
+    cs->str    = (char *)malloc(1);
     cs->str[0] = '\0';
-    cs->len = 0;
+    cs->len    = 0;
 }
 
 int
@@ -120,13 +114,13 @@ cstring_front(const cstring *cs)
 char
 cstring_back(const cstring *cs)
 {
-    return (!cstring_empty(cs) ? cs->str[cs->len -1] : cs->str[0]);
+    return (!cstring_empty(cs) ? cs->str[cs->len-1] : cs->str[0]);
 }
 
 int
 cstring_empty(const cstring *cs)
 {
-    return (cs->len == 0 || cs->str == NULL);
+    return (cs->str == NULL && cs->len == 0);
 }
 
 char *
@@ -151,12 +145,6 @@ cstring_resize(cstring *cs, size_t new_capacity)
         cs->str = tmp;
         cs->capacity = new_capacity;
     }
-}
-
-size_t
-cstring_len(const cstring *cs)
-{
-    return strlen(cs->str);
 }
 
 int

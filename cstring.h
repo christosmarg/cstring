@@ -27,7 +27,6 @@ extern char   *cstring_copy(const char *s);
 extern void    cstring_resize(cstring *cs, size_t n);
 
 /* might be useless */
-extern size_t  cstring_len(const cstring *cs);
 extern int     cstring_equals(const cstring *lhs, const cstring *rhs);
 extern int     cstring_not_equals(const cstring *lhs, const cstring *rhs);
 extern int     cstring_greater(const cstring *lhs, const cstring *rhs);
