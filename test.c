@@ -4,40 +4,40 @@
 int
 main(int argc, char **argv)
 {
-    cstring s = cstring_init("Hello world");
-    printf("cstring_init: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
+    cstring s = cstr_init("Hello world");
+    printf("cstr_init: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
 
-    cstring_append(&s, "Append");
-    printf("cstring_append: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
+    cstr_append(&s, "Append");
+    printf("cstr_append: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
 
-    cstring_assign(&s, "New string");
-    printf("cstring_assign: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
+    cstr_assign(&s, "New string");
+    printf("cstr_assign: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
 
-    if (cstring_exists(&s, "string"))
-        printf("cstring_exists: \"string\" exists!\n");
+    if (cstr_exists(&s, "string"))
+        printf("cstr_exists: \"string\" exists!\n");
 
-    cstring_push_back(&s, 'c');
-    printf("cstring_push_back: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
+    cstr_push_back(&s, 'c');
+    printf("cstr_push_back: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
 
-    cstring_insert(&s, "Inserted text", 4);
-    printf("cstring_insert: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
+    cstr_insert(&s, "Inserted text", 4);
+    printf("cstr_insert: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
     
-    cstring_pop_back(&s);
-    printf("cstring_pop_back: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
+    cstr_pop_back(&s);
+    printf("cstr_pop_back: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
 
-    cstring_clear(&s);
-    printf("cstring_clear: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
+    cstr_clear(&s);
+    printf("cstr_clear: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
 
-    cstring_assign(&s, "CSTRING");
-    printf("cstring_assign: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
-    printf("cstring_front: %c\n", cstring_front(&s));
-    printf("cstring_back: %c\n", cstring_back(&s));
+    cstr_assign(&s, "CSTRING");
+    printf("cstr_assign: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
+    printf("cstr_front: %c\n", cstr_front(&s));
+    printf("cstr_back: %c\n", cstr_back(&s));
 
-    cstring_replace(&s, 3, 'x');
-    printf("cstring_replace: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
+    cstr_replace(&s, 3, 'x');
+    printf("cstr_replace: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
 
-    cstring_delete(&s);
-    if (cstring_empty(&s)) printf("cstring_delete: Deleted string.\n");
+    cstr_delete(&s);
+    if (cstr_empty(&s)) printf("cstr_delete: Deleted string.\n");
 
     return 0;
 }
