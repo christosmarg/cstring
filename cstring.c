@@ -142,7 +142,7 @@ cstr_resize(cstring *cs, size_t newcapacity)
         memcpy(tmp, cs->str, cs->len + 1);
         free(cs->str);
         tmp[cs->len] = '\0';
-        cs->str = tmp;
+        cs->str      = tmp;
         cs->capacity = newcapacity;
     }
 }
