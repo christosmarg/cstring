@@ -10,28 +10,28 @@ typedef struct {
     size_t  capacity;
 } cstring;
 
-extern cstring cstr_init(const char *);
-extern void    cstr_delete(cstring *);
-extern void    cstr_assign(cstring *, const char *);
-extern void    cstr_append(cstring *, const char *);
-extern void    cstr_insert(cstring *, const char *, size_t);
-extern void    cstr_push_back(cstring *, char);
-extern void    cstr_pop_back(cstring *);
-extern void    cstr_replace_char(cstring *, size_t, char);
-extern void    cstr_clear(cstring *);
-extern int     cstr_exists(const cstring *, const char *);
-extern char    cstr_front(const cstring *);
-extern char    cstr_back(const cstring *);
-extern int     cstr_empty(const cstring *);
-extern char   *cstr_copy(const char *);
-extern void    cstr_resize(cstring *, size_t);
+extern cstring cstring_init(const char *);
+extern void    cstring_delete(cstring *);
+extern void    cstring_assign(cstring *, const char *);
+extern void    cstring_append(cstring *, const char *);
+extern void    cstring_insert(cstring *, const char *, size_t);
+extern void    cstring_push_back(cstring *, char);
+extern void    cstring_pop_back(cstring *);
+extern void    cstring_replace_char(cstring *, size_t, char);
+extern void    cstring_clear(cstring *);
+extern int     cstring_exists(const cstring *, const char *);
+extern char    cstring_front(const cstring *);
+extern char    cstring_back(const cstring *);
+extern int     cstring_empty(const cstring *);
+extern char   *cstring_copy(const char *);
+extern void    cstring_resize(cstring *, size_t);
 
 /* might be useless */
-extern int     cstr_equals(const cstring *, const cstring *);
-extern int     cstr_not_equals(const cstring *, const cstring *);
-extern int     cstr_greater(const cstring *, const cstring *);
-extern int     cstr_greater_or_equals(const cstring *, const cstring *);
-extern int     cstr_less(const cstring *, const cstring *);
-extern int     cstr_less_or_equals(const cstring *, const cstring *);
+extern int     cstring_equals(const cstring *, const cstring *);
+extern int     cstring_not_equals(const cstring *, const cstring *);
+extern int     cstring_greater(const cstring *, const cstring *);
+extern int     cstring_greater_or_equals(const cstring *, const cstring *);
+extern int     cstring_less(const cstring *, const cstring *);
+extern int     cstring_less_or_equals(const cstring *, const cstring *);
 
 #endif /* CSTRING_H */
