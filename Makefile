@@ -25,8 +25,5 @@ $(TARGET): $(OBJ)
 run:
 	./$(TARGET)
 
-install: $(TARGET)
-	cp $(TARGET) $(INSTALL_PATH)
-
 clean:
 	$(RM) $(OBJ) $(TARGET)

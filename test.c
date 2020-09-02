@@ -33,7 +33,7 @@ main(int argc, char **argv)
     printf("cstr_front: %c\n", cstr_front(&s));
     printf("cstr_back: %c\n", cstr_back(&s));
 
-    cstr_replace(&s, 3, 'x');
+    cstr_replace_char(&s, 3, 'x');
     printf("cstr_replace: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
 
     cstr_delete(&s);

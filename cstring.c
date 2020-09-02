@@ -32,8 +32,7 @@ cstr_assign(cstring *cs, const char *s)
 void
 cstr_append(cstring *cs, const char *s)
 {
-    if (!cstr_empty(cs))
-    {
+    if (!cstr_empty(cs)) {
         size_t newlen = cs->len + strlen(s);
         if (newlen >= cs->capacity) cstr_resize(cs, newlen << 1);
         strcat(cs->str, s);
@@ -44,8 +43,7 @@ cstr_append(cstring *cs, const char *s)
 void
 cstr_insert(cstring *cs, const char *s, size_t i)
 {
-    if (!cstr_empty(cs) && i < cs->len)
-    {
+    if (!cstr_empty(cs) && i < cs->len) {
         size_t slen = strlen(s);
         size_t newlen = cs->len + slen;
         char *tmp1 = (char *)malloc(i + 1);
@@ -74,8 +72,7 @@ cstr_push_back(cstring *cs, char c)
 void
 cstr_pop_back(cstring *cs)
 {
-    if (cs->len > 0)
-    {
+    if (cs->len > 0) {
         char *tmp = (char *)malloc(cs->len);
         memcpy(tmp, cs->str, cs->len);
         free(cs->str);
@@ -85,7 +82,7 @@ cstr_pop_back(cstring *cs)
 }
 
 void
-cstr_replace(cstring *cs, size_t i, char c)
+cstr_replace_char(cstring *cs, size_t i, char c)
 {
     if (i < cs->len) cs->str[i] = c;
 }
@@ -136,8 +133,7 @@ cstr_copy(const char *s)
 void
 cstr_resize(cstring *cs, size_t newcapacity)
 {
-    if (!cstr_empty(cs))
-    {
+    if (!cstr_empty(cs)) {
         char *tmp = (char *)malloc(newcapacity + 1);
         memcpy(tmp, cs->str, cs->len + 1);
         free(cs->str);

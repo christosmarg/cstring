@@ -22,7 +22,7 @@ The recommended way of initializing an empty string is by doing `cstring foo = c
 * `cstr_insert`: Inserts a string at a specific index
 * `cstr_push_back`: Adds a character at the end of the string
 * `cstr_pop_back`: Removes the last character in the string
-* `cstr_replace`: Replaces a character at a specific index
+* `cstr_replace_char`: Replaces a character at a specific index
 * `cstr_clear`: Erases the whole string
 * `cstr_exists`: Checks to see if a (sub)string exists in the string
 * `cstr_front`: Returns the first character of the string
