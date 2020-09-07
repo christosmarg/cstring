@@ -143,6 +143,18 @@ cstring_resize(cstring *cs, size_t newcapacity)
     }
 }
 
+cstring *
+cstring_getline(FILE *fd, cstring *cs, char delim)
+{
+    char c;
+    cstring_clear(cs);
+    while ((c = fgetc(fd)) != EOF && c != '\n') {
+        if (c == delim) break;
+        else cstring_push_back(cs, c);
+    }
+    return (c == EOF) ? NULL : cs;
+}
+
 int
 cstring_equals(const cstring *lhs, const cstring *rhs)
 {

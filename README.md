@@ -30,12 +30,13 @@ The recommended way of initializing an empty string is by doing `cstring foo = c
 * `cstring_empty`: Checks if the string is empty
 * `cstring_copy`: Makes a copy of a given `const char *`
 * `cstring_resize`: Resizes the array stored inside the string `struct`
-* `cstring_equals`: True if the strings are equal
-* `cstring_not_equals`: True if the strings are not equal
+* `cstring_getline`: Reads a line from a stream
+* `cstring_equal`: True if the strings are equal
+* `cstring_not_equal`: True if the strings are not equal
 * `cstring_greater`: True if the left hand string is greater than the right hand one
-* `cstring_greater_or_equals`: True if the left hand string is greater than or equal to the right hand one
+* `cstring_greater_or_equal`: True if the left hand string is greater than or equal to the right hand one
 * `cstring_less`: True if the left hand string is less than the right hand one
-* `cstring_less_or_equals`: True if the left hand string is less than or equal to the right hand one
+* `cstring_less_or_equal`: True if the left hand string is less than or equal to the right hand one
 
 ## Example
 
