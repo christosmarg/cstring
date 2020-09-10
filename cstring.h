@@ -11,7 +11,7 @@ typedef struct cstring {
     size_t  capacity;
 } cstring;
 
-extern cstring  cstring_init(const char *);
+extern cstring  cstring_create(const char *);
 extern void     cstring_delete(cstring *);
 extern void     cstring_assign(cstring *, const char *);
 extern void     cstring_append(cstring *, const char *);

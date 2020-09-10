@@ -7,15 +7,15 @@ A simple and lightweight string library for C.
 Simply include the source files in your projects and compile them
 along with your other files.  
 
-When using this library, you must to **always** call the `cstring_init` and `cstring_delete` 
+When using this library, you must to **always** call the `cstring_create` and `cstring_delete` 
 functions whenever you want to make a new instance of `cstring` and stop using it respectively,
 in order not to cause any memory leaks, as there's no *constructor* and *destructor* to do it for you.  
 
-The recommended way of initializing an empty string is by doing `cstring foo = cstring_init("")`.
+The recommended way of initializing an empty string is by doing `cstring foo = cstring_create("")`.
 
 ## Functions
 
-* `cstring_init`: Initiliazes string
+* `cstring_create`: Initiliazes string
 * `cstring_delete`: Deallocates string
 * `cstring_assign`: Assigns a new string to the current string
 * `cstring_append`: Appends a string to the current string
@@ -49,7 +49,7 @@ See `test.c` for more.
 int
 main(int argc, char **argv)
 {
-    cstring s = cstring_init("Foo");
+    cstring s = cstring_create("Foo");
     cstring_append(&s, "Bar.");
     printf("%s\n", s.str);
     cstring_delete(&s);

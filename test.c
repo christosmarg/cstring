@@ -3,8 +3,8 @@
 int
 main(int argc, char **argv)
 {
-    cstring s = cstring_init("Hello world");
-    printf("cstring_init: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
+    cstring s = cstring_create("Hello world");
+    printf("cstring_create: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
 
     cstring_append(&s, "Append");
     printf("cstring_append: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);

@@ -1,7 +1,7 @@
 #include "cstring.h"
 
 cstring
-cstring_init(const char *s)
+cstring_create(const char *s)
 {
     cstring cs;
     cs.str = cstring_copy(s);
