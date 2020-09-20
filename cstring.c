@@ -111,7 +111,7 @@ cstring_front(const cstring *cs)
 char
 cstring_back(const cstring *cs)
 {
-    return (!cstring_empty(cs) ? cs->str[cs->len-1] : cs->str[0]);
+    return (!cstring_empty(cs) ? cs->str[cs->len - 1] : cs->str[0]);
 }
 
 int
