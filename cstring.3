@@ -1,0 +1,79 @@
+.TH cstring 3
+.SH NAME
+cstring \- A simple and lightweight string library for C inspired by C++'s
+STL string class
+.SH FUNCTIONS
+.TP
+.BR cstring\ cstring_create(const\ char\ *)
+Instanciates and initializes a
+.I cstring
+object.
+.TP
+.BR void\ cstring_delete(cstring\ *)
+Deallocate string.
+.TP
+.BR void\ cstring_assign(cstring\ *,\ const\ char\ *)
+Assign a new string to the current string.
+.TP
+.BR void\ cstring_append(cstring\ *,\ const\ char\ *)
+Append a string at the end of the current string.
+.TP
+.BR void\ cstring_insert(cstring\ *,\ const\ char\ *,\ size_t)
+Insert a string at a specific index.
+.TP
+.BR void\ cstring_push_back(cstring\ *,\ char)
+Add a character at the end of the string.
+.TP
+.BR void\ cstring_pop_back(cstring\ *)
+Remove the last character in the string.
+.TP
+.BR void\ cstring_replace_char(cstring\ *,\ const\ char\ *)
+Replace character at a specific index.
+.TP
+.BR void\ cstring_clear(cstring\ *)
+Erase the whole string.
+.TP
+.BR int\ cstring_exists(const\ cstring\ *,\ const\ char\ *)
+Check to see if a (sub)string exists in the string.
+.TP
+.BR char\ cstring_front(const\ cstring\ *)
+Returns the first character of the string.
+.TP
+.BR char\ cstring_back(const\ cstring\ *)
+Returns the last character of the string.
+.TP
+.BR int\ cstring_empty(const\ cstring\ *)
+Check to see if the string is empty.
+.TP
+.BR char\ *cstring_copy(const\ char\ *)
+Make a copy of a given
+.I const\ char\ *
+.TP
+.BR void\ cstring_resize(cstring\ *,\ size_t)
+Resize the
+.I str
+array inside a given
+.I cstring
+struct.
+.TP
+.BR cstring\ *cstring_getline(FILE\ *,\ cstring\ *,\ char)
+Read a line from a
+.I FILE
+stream. Similar behavior to
+.I stdio's\ getline
+.SH USAGE
+You must
+.B always
+call the
+.I cstring_create
+and
+.I cstring_delete
+functions whenever you want to make a new instance of
+.I cstring
+and stop using it respectively, in order to not cause any memory
+leaks.
+.P
+The recommended way of initializing an empty string is by doing
+.I cstring foo = cstring_create("")
+.SH AUTHORS
+Christos Margiolis <christos@christosmarg.xyz>

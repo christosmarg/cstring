@@ -2,10 +2,28 @@
 
 A simple and lightweight string library for C.
 
-## Usage
+## Building
 
-Simply include the source files in your projects and compile them
-along with your other files.  
+`cstring` is a static library. The header file is installed in `/usr/local/include` and
+the library file in `/usr/local/lib`. In order to install it do the following
+
+```shell
+$ cd /path/to/cstring
+$ make
+$ sudo make install
+$ make clean
+```
+
+If you want to uninstall the library do the following
+
+```shell
+$ cd /path/to/cstring
+$ sudo make uninstall
+```
+
+In order to link `cstring` to your project use the `-lcstring` flag during the compilation.
+
+## Usage
 
 When using this library, you must to **always** call the `cstring_create` and `cstring_delete` 
 functions whenever you want to make a new instance of `cstring` and stop using it respectively,
@@ -44,7 +62,7 @@ See `test.c` for more.
 
 ```c
 #include <stdio.h>
-#include "cstring.h"
+#include <cstring.h>
 
 int
 main(int argc, char **argv)
