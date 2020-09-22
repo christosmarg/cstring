@@ -30,11 +30,20 @@ Remove the last character in the string.
 .BR void\ cstring_replace_char(cstring\ *,\ const\ char\ *)
 Replace character at a specific index.
 .TP
+.BR cstring\ cstring_substr(cstring\ *,\ size_t\ ,\ size_t)
+Extract a substring from current string.
+.TP
 .BR void\ cstring_clear(cstring\ *)
 Erase the whole string.
 .TP
-.BR int\ cstring_exists(const\ cstring\ *,\ const\ char\ *)
-Check to see if a (sub)string exists in the string.
+.BR size_t\ cstring_find(const\ cstring\ *,\ const\ char\ *)
+Find first occurence of a pattern in string.
+.TP
+.BR size_t\ cstring_find_first_of(const\ cstring\ *,\ char)
+Find first occurence of a character in string.
+.TP
+.BR size_t\ cstring_find_last_of(const\ cstring\ *,\ char)
+Find last occurence of a character in string.
 .TP
 .BR char\ cstring_front(const\ cstring\ *)
 Returns the first character of the string.
@@ -61,6 +70,41 @@ Read a line from a
 .I FILE
 stream. Similar behavior to
 .I stdio's\ getline
+.SH MACROS
+The following macros should be used carefully
+.TP
+.BR CSTRING_OUT_OF_BOUNDS(cs,\ pos)
+Check if
+.I pos
+is out of bounds.
+.TP
+.BR CSTRING_EXCEEDS_CAPACITY(len,\ cap)
+Check if
+.I len
+is more than
+.I cap
+in order to resize the string.
+.TP
+.BR CSTRING_FIND_OCCURENCE(cs,\ s,\ func)
+Although it should be used internally, this macro
+returns the index at which
+.I s
+occurs in the string according to
+.I func
+which is used as a callback function, although it is
+meant to support
+.I strstr
+,
+.I strchr
+and
+.I strrchr
+from
+.I string.h
+.SH CONSTANTS
+.TP
+.BR CSTRING_NPOS
+This constant signifies that a pattern hasn't been found inside
+the string. It's value is -1.
 .SH USAGE
 You must
 .B always

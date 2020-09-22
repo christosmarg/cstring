@@ -14,9 +14,6 @@ main(int argc, char **argv)
     cstring_assign(&s, "New string");
     printf("cstring_assign: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
 
-    if (cstring_exists(&s, "string"))
-        printf("cstring_exists: \"string\" exists!\n");
-
     cstring_push_back(&s, 'c');
     printf("cstring_push_back: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
 
