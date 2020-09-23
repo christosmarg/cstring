@@ -26,10 +26,14 @@ extern void     cstring_delete(cstring *);
 extern void     cstring_assign(cstring *, const char *);
 extern void     cstring_append(cstring *, const char *);
 extern void     cstring_insert(cstring *, const char *, size_t);
+extern void     cstring_erase(cstring *, size_t, size_t);
 extern void     cstring_push_back(cstring *, char);
 extern void     cstring_pop_back(cstring *);
 extern void     cstring_replace_char(cstring *, size_t, char);
+extern void     cstring_replace_str(cstring *, const char *, size_t, size_t);
 extern cstring  cstring_substr(const cstring *, size_t, size_t);
+extern void     cstring_swap(cstring *, cstring *);
+extern void     cstring_shrink_to_fit(cstring *);
 extern void     cstring_clear(cstring *);
 extern size_t   cstring_find(const cstring *, const char *);
 extern size_t   cstring_find_first_of(const cstring *, char);
@@ -40,7 +44,6 @@ extern int      cstring_empty(const cstring *);
 extern char    *cstring_copy(const char *);
 extern void     cstring_resize(cstring *, size_t);
 extern cstring *cstring_getline(FILE *, cstring *, char);
-//extern cstring *cstring_tok(const cstring *, const char *);
 
 /* might be useless */
 extern int      cstring_equal(const cstring *, const cstring *);

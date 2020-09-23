@@ -32,7 +32,13 @@ main(int argc, char **argv)
     printf("cstring_back: %c\n", cstring_back(&s));
 
     cstring_replace_char(&s, 3, 'x');
-    printf("cstring_replace: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
+    printf("cstring_replace_char: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
+
+    cstring_replace_str(&s, "hell", 0, strlen("hell"));
+    printf("cstring_replace_str: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
+
+    cstring_erase(&s, 1, 4);
+    printf("cstring_erase: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
 
     cstring_delete(&s);
     if (cstring_empty(&s)) printf("cstring_delete: Deleted string.\n");

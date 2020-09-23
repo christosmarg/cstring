@@ -40,6 +40,7 @@ cstring_append(cstring *cs, const char *s)
         strcat(cs->str, s);
         cs->len = newlen;
     }
+    else cstring_assign(cs, s); // TEST
 }
 
 void
@@ -61,6 +62,24 @@ cstring_insert(cstring *cs, const char *s, size_t i)
         cs->str[cs->len] = '\0';
         free(tmp1);
         free(tmp2);
+    }
+}
+
+void
+cstring_erase(cstring *cs, size_t pos, size_t len)
+{
+    if (!CSTRING_OUT_OF_BOUNDS(cs, pos)
+    &&  !CSTRING_OUT_OF_BOUNDS(cs, len)
+    &&  pos < len)
+    {
+        size_t newlen = cs->len - len;
+        char *tmp = (char *)malloc(newlen + 1);
+        memcpy(tmp, cs->str, pos + 1);
+        memcpy(tmp + pos, cs->str + pos + len, newlen);
+        free(cs->str);
+        cs->len = newlen;
+        cs->str = tmp;
+        cs->str[cs->len] = '\0';
     }
 }
 
@@ -92,18 +111,46 @@ cstring_replace_char(cstring *cs, size_t i, char c)
         cs->str[i] = c;
 }
 
+void
+cstring_replace_str(cstring *cs, const char *s, size_t pos, size_t len)
+{
+    if (!CSTRING_OUT_OF_BOUNDS(cs, pos)
+    &&  !CSTRING_OUT_OF_BOUNDS(cs, len)
+    &&  !CSTRING_OUT_OF_BOUNDS(cs, pos + len)
+    &&  pos < len)
+    {
+        int i = pos;
+        for (; i < len && *s; s++, i++)
+            cs->str[i] = *s;
+    }
+}
+
 cstring
 cstring_substr(const cstring *cs, size_t pos, size_t len)
 {
     if (CSTRING_OUT_OF_BOUNDS(cs, pos)
     ||  CSTRING_OUT_OF_BOUNDS(cs, len)
-    ||  len < pos)
+    ||  pos < len)
         return cstring_create("");
     cstring substr = cstring_create(&cs->str[pos]);
     substr.len = len;
     substr.str[len] = '\0';
-    // maybe cstring_resize
+    cstring_shrink_to_fit(&substr);
     return substr;
+}
+
+void
+cstring_swap(cstring *lhs, cstring *rhs)
+{
+    cstring tmp = *lhs;
+    *lhs = *rhs;
+    *rhs = tmp;
+}
+
+void
+cstring_shrink_to_fit(cstring *cs)
+{
+    cs->capacity = cs->len;
 }
 
 void
@@ -113,6 +160,7 @@ cstring_clear(cstring *cs)
     cs->str = (char *)malloc(1);
     cs->str[0] = '\0';
     cs->len = 0;
+    cs->capacity = 0;
 }
 
 size_t
