@@ -18,11 +18,23 @@ Assign a new string to the current string.
 .BR void\ cstring_append(cstring\ *cs,\ const\ char\ *s)
 Append to end of string.
 .TP
+.BR void\ cstring_prepend(cstring\ *cs,\ const\ char\ *s)
+Prepend to beginning of string.
+.TP
 .BR void\ cstring_insert(cstring\ *cs,\ const\ char\ *s,\ size_t\ i)
 Insert at a specific index.
 .TP
 .BR void\ cstring_erase(cstring\ *cs,\ size_t\ pos,\ size_t\ len)
 Erase a portion of the string.
+.TP
+.BR void\ cstring_erase_matching(cstring\ *cs,\ const\ char\ *s)
+Erase first match from the string.
+.TP
+.BR void\ cstring_erase_all_matching(cstring\ *cs,\ const\ char\ *s)
+Erase all matches from the string.
+.TP
+.BR void\ cstring_trim(cstring\ *cs,\ char\ c)
+Trim character from string.
 .TP
 .BR void\ cstring_push_back(cstring\ *cs,\ char\ c)
 Add a character at the end of the string.
@@ -65,6 +77,22 @@ Returns the last character of the string.
 .TP
 .BR int\ cstring_empty(const\ cstring\ *cs)
 Check to see if the string is empty.
+.TP
+.BR int\ cstring_starts_with_str(const\ cstring\ *cs,\ const\ char\ *s)
+Check to see if string begins with
+.I s
+.TP
+.BR int\ cstring_ends_with_str(const\ cstring\ *cs,\ const\ char\ *s)
+Check to see if string ends with
+.I s
+.TP
+.BR int\ cstring_starts_with_char(const\ cstring\ *cs,\ char\ c)
+Check to see if string starts with
+.I c
+.TP
+.BR int\ cstring_ends_with_char(const\ cstring\ *cs,\ char\ c)
+Check to see if string ends with
+.I c
 .TP
 .BR char\ *cstring_copy(const\ char\ *s)
 Make a copy of a given

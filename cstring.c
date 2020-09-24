@@ -44,9 +44,18 @@ cstring_append(cstring *cs, const char *s)
 }
 
 void
+cstring_prepend(cstring *cs, const char *s)
+{
+    cstring_insert(cs, s, 0);
+}
+
+void
 cstring_insert(cstring *cs, const char *s, size_t i)
 {
-    if (!cstring_empty(cs) && !CSTRING_OUT_OF_BOUNDS(cs, i)) {
+    if (!CSTRING_OUT_OF_BOUNDS(cs, i)
+    &&  !cstring_empty(cs)
+    &&  s != NULL)
+    {
         size_t slen = strlen(s);
         size_t newlen = cs->len + slen;
         char *tmp1 = (char *)malloc(i + 1);
@@ -68,9 +77,9 @@ cstring_insert(cstring *cs, const char *s, size_t i)
 void
 cstring_erase(cstring *cs, size_t pos, size_t len)
 {
-    if (!CSTRING_OUT_OF_BOUNDS(cs, pos)
-    &&  !CSTRING_OUT_OF_BOUNDS(cs, len)
-    &&  pos < len)
+    if (!cstring_empty(cs)
+    &&  !CSTRING_OUT_OF_BOUNDS(cs, pos)
+    &&  !CSTRING_OUT_OF_BOUNDS(cs, len))
     {
         size_t newlen = cs->len - len;
         char *tmp = (char *)malloc(newlen + 1);
@@ -81,6 +90,32 @@ cstring_erase(cstring *cs, size_t pos, size_t len)
         cs->str = tmp;
         cs->str[cs->len] = '\0';
     }
+}
+
+void
+cstring_erase_matching(cstring *cs, const char *s)
+{
+    if (s != NULL)
+        cstring_erase(cs, cstring_find(cs, s), strlen(s));
+}
+
+void
+cstring_erase_all_matching(cstring *cs, const char *s)
+{
+    if (s != NULL) {
+        size_t len = strlen(s);
+        size_t i = cstring_find(cs, s);
+        for (; i != CSTRING_NPOS; i = cstring_find(cs, s))
+            cstring_erase(cs, i, len);
+    }
+}
+
+void
+cstring_trim(cstring *cs, char c)
+{
+    size_t i = cstring_find_first_of(cs, c);
+    for (; i != CSTRING_NPOS; i = cstring_find_first_of(cs, c))
+        cstring_erase(cs, i, 1);
 }
 
 void
@@ -116,8 +151,7 @@ cstring_replace_str(cstring *cs, const char *s, size_t pos, size_t len)
 {
     if (!CSTRING_OUT_OF_BOUNDS(cs, pos)
     &&  !CSTRING_OUT_OF_BOUNDS(cs, len)
-    &&  !CSTRING_OUT_OF_BOUNDS(cs, pos + len)
-    &&  pos < len)
+    &&  !CSTRING_OUT_OF_BOUNDS(cs, pos + len))
     {
         int i = pos;
         for (; i < len && *s; s++, i++)
@@ -129,8 +163,7 @@ cstring
 cstring_substr(const cstring *cs, size_t pos, size_t len)
 {
     if (CSTRING_OUT_OF_BOUNDS(cs, pos)
-    ||  CSTRING_OUT_OF_BOUNDS(cs, len)
-    ||  pos < len)
+    ||  CSTRING_OUT_OF_BOUNDS(cs, len))
         return cstring_create("");
     cstring substr = cstring_create(&cs->str[pos]);
     substr.len = len;
@@ -206,6 +239,30 @@ int
 cstring_empty(const cstring *cs)
 {
     return (cs->str == NULL && cs->len == 0);
+}
+
+int
+cstring_starts_with_str(const cstring *cs, const char *s)
+{
+    return (cstring_find(cs, s) == 0);
+}
+
+int
+cstring_ends_with_str(const cstring *cs, const char *s)
+{
+    return (cstring_find(cs, s) == cs->len - strlen(s));
+}
+
+int
+cstring_starts_with_char(const cstring *cs, char c)
+{
+    return (cs->str[0] == c);
+}
+
+int
+cstring_ends_with_char(const cstring *cs, char c)
+{
+    return (cs->str[cs->len] = c);
 }
 
 char *

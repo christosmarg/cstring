@@ -13,7 +13,7 @@
 #define CSTRING_FIND_OCCURENCE(cs, s, func)    \
     char *_found;                              \
     if ((_found = func(cs->str, (s))) != NULL) \
-        return (_found - cs->str + 1)
+        return (_found - cs->str) // MAYBE NEEDS +1
 
 typedef struct cstring {
     char   *str;
@@ -25,8 +25,12 @@ extern cstring  cstring_create(const char *);
 extern void     cstring_delete(cstring *);
 extern void     cstring_assign(cstring *, const char *);
 extern void     cstring_append(cstring *, const char *);
-extern void     cstring_insert(cstring *, const char *, size_t);
+extern void     cstring_prepend(cstring *, const char *);
+extern void     cstring_insert(cstring *, const char *, size_t); // FIX
 extern void     cstring_erase(cstring *, size_t, size_t);
+extern void     cstring_erase_matching(cstring *, const char *);
+extern void     cstring_erase_all_matching(cstring *, const char *);
+extern void     cstring_trim(cstring *, char);
 extern void     cstring_push_back(cstring *, char);
 extern void     cstring_pop_back(cstring *);
 extern void     cstring_replace_char(cstring *, size_t, char);
@@ -41,6 +45,10 @@ extern size_t   cstring_find_last_of(const cstring *, char);
 extern char     cstring_front(const cstring *);
 extern char     cstring_back(const cstring *);
 extern int      cstring_empty(const cstring *);
+extern int      cstring_starts_with_str(const cstring *, const char *);
+extern int      cstring_ends_with_str(const cstring *, const char *);
+extern int      cstring_starts_with_char(const cstring *, char);
+extern int      cstring_ends_with_char(const cstring *, char);
 extern char    *cstring_copy(const char *);
 extern void     cstring_resize(cstring *, size_t);
 extern cstring *cstring_getline(FILE *, cstring *, char);
