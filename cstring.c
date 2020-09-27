@@ -1,12 +1,30 @@
 #include "cstring.h"
 
+#define CSTRING_EXCEEDS_CAPACITY(len, cap)  ((len) >= (cap))
+#define CSTRING_FIND_OCCURENCE(cs, s, func) do { \
+    char *_found;                                \
+    if ((_found = func(cs->str, (s))) != NULL)   \
+        return (_found - cs->str);               \
+} while (0)
+
+static int
+cstring_is_one_of(char c, const char *s)
+{
+    for (; *s; s++)
+        if (*s == c)
+            return 1;
+    return 0;
+}
+
 cstring
 cstring_create(const char *s)
 {
     cstring cs;
-    cs.str = cstring_copy(s);
     cs.len = strlen(s);
-    cstring_resize(&cs, cs.len << 1); 
+    cs.capacity = cs.len << 1;
+    cs.str = (char *)malloc(cs.capacity + 1);
+    memcpy(cs.str, s, cs.len + 1);
+    cs.str[cs.len] = '\0';
     return cs;
 }
 
@@ -23,11 +41,11 @@ void
 cstring_assign(cstring *cs, const char *s)
 {
     size_t newlen = strlen(s);
+    if (CSTRING_EXCEEDS_CAPACITY(newlen, cs->capacity))
+        cstring_resize(cs, newlen << 1);
     if (!cstring_empty(cs)) free(cs->str);
     cs->str = cstring_copy(s);
     cs->len = newlen;
-    if (CSTRING_EXCEEDS_CAPACITY(newlen, cs->capacity))
-        cstring_resize(cs, newlen << 1);
 }
 
 void
@@ -40,7 +58,7 @@ cstring_append(cstring *cs, const char *s)
         strcat(cs->str, s);
         cs->len = newlen;
     }
-    else cstring_assign(cs, s); // TEST
+    else cstring_assign(cs, s);
 }
 
 void
@@ -53,24 +71,21 @@ void
 cstring_insert(cstring *cs, const char *s, size_t i)
 {
     if (!CSTRING_OUT_OF_BOUNDS(cs, i)
-    &&  !cstring_empty(cs)
+    &&  !cstring_empty(cs) // useless check?
     &&  s != NULL)
     {
         size_t slen = strlen(s);
         size_t newlen = cs->len + slen;
-        char *tmp1 = (char *)malloc(i + 1);
-        char *tmp2 = (char *)malloc(cs->len - i + 1);
-        memcpy(tmp1, cs->str, i + 1);
-        memcpy(tmp2, cs->str + i, cs->len + 1);
+        char *tmp = (char *)malloc(newlen + 1);
+        memcpy(tmp, cs->str, i);
+        memcpy(tmp + i, s, slen);
+        memcpy(tmp + i + slen, cs->str + i, cs->len);
         if (CSTRING_EXCEEDS_CAPACITY(newlen, cs->capacity))
             cstring_resize(cs, newlen << 1);
-        memcpy(cs->str, tmp1, i + 1);
-        memcpy(cs->str + i, s, slen + 1);
-        memcpy(cs->str + slen + i, tmp2, cs->len - i + 1);
+        free(cs->str);
         cs->len = newlen;
+        cs->str = tmp;
         cs->str[cs->len] = '\0';
-        free(tmp1);
-        free(tmp2);
     }
 }
 
@@ -83,7 +98,7 @@ cstring_erase(cstring *cs, size_t pos, size_t len)
     {
         size_t newlen = cs->len - len;
         char *tmp = (char *)malloc(newlen + 1);
-        memcpy(tmp, cs->str, pos + 1);
+        memcpy(tmp, cs->str, pos); // pos + 1??
         memcpy(tmp + pos, cs->str + pos + len, newlen);
         free(cs->str);
         cs->len = newlen;
@@ -111,10 +126,10 @@ cstring_erase_all_matching(cstring *cs, const char *s)
 }
 
 void
-cstring_trim(cstring *cs, char c)
+cstring_trim(cstring *cs, const char *s)
 {
-    size_t i = cstring_find_first_of(cs, c);
-    for (; i != CSTRING_NPOS; i = cstring_find_first_of(cs, c))
+    size_t i = cstring_find_first_of(cs, s);
+    for (; i != CSTRING_NPOS; i = cstring_find_first_of(cs, s))
         cstring_erase(cs, i, 1);
 }
 
@@ -134,7 +149,7 @@ cstring_pop_back(cstring *cs)
         char *tmp = (char *)malloc(cs->len);
         memcpy(tmp, cs->str, cs->len);
         free(cs->str);
-        tmp[cs->len--] = '\0';
+        tmp[--cs->len] = '\0';
         cs->str = tmp;
     }
 }
@@ -183,7 +198,7 @@ cstring_swap(cstring *lhs, cstring *rhs)
 void
 cstring_shrink_to_fit(cstring *cs)
 {
-    cs->capacity = cs->len;
+    cstring_resize(cs, cs->len);
 }
 
 void
@@ -206,20 +221,58 @@ cstring_find(const cstring *cs, const char *s)
 }
 
 size_t
-cstring_find_first_of(const cstring *cs, char c)
+cstring_rfind(const cstring *cs, const char *s)
 {
-    if (cstring_empty(cs) || c == '\0')
+    if (cstring_empty(cs) || !*s)
         return CSTRING_NPOS;
-    CSTRING_FIND_OCCURENCE(cs, c, strchr);
+    /* IMPLEMENT */
     return CSTRING_NPOS;
 }
 
 size_t
-cstring_find_last_of(const cstring *cs, char c)
+cstring_find_first_of(const cstring *cs, const char *s)
 {
-    if (cstring_empty(cs) || c == '\0')
+    if (cstring_empty(cs) || !*s)
         return CSTRING_NPOS;
-    CSTRING_FIND_OCCURENCE(cs, c, strrchr);
+    for (; *s; s++) {
+        CSTRING_FIND_OCCURENCE(cs, *s, strchr);
+    }
+    return CSTRING_NPOS;
+}
+
+size_t
+cstring_find_first_not_of(const cstring *cs, const char *s)
+{
+    if (cstring_empty(cs) || !*s)
+        return CSTRING_NPOS;
+    size_t i = 0;
+    for (; i < cs->len; i++)
+        if (!cstring_is_one_of(cs->str[i], s))
+            return i;
+    return CSTRING_NPOS;
+}
+
+size_t
+cstring_find_last_of(const cstring *cs, const char *s)
+{
+    if (cstring_empty(cs) || !*s)
+        return CSTRING_NPOS;
+    size_t i = *(s + strlen(s));
+    for (; i >= 0; i--) {
+        CSTRING_FIND_OCCURENCE(cs, s[i], strrchr);
+    }
+    return CSTRING_NPOS;
+}
+
+size_t
+cstring_find_last_not_of(const cstring *cs, const char *s)
+{
+    if (cstring_empty(cs) || !*s)
+        return CSTRING_NPOS;
+    size_t i = cs->len;
+    for (; i >= 0; i--)
+        if (!cstring_is_one_of(cs->str[i], s))
+            return i;
     return CSTRING_NPOS;
 }
 
@@ -279,12 +332,9 @@ void
 cstring_resize(cstring *cs, size_t newcapacity)
 {
     if (!cstring_empty(cs)) {
-        char *tmp = (char *)malloc(newcapacity + 1);
-        memcpy(tmp, cs->str, cs->len + 1);
-        free(cs->str);
-        tmp[cs->len] = '\0';
-        cs->str      = tmp;
         cs->capacity = newcapacity;
+        cs->str = (char *)realloc(cs->str, cs->capacity + 1);
+        cs->str[cs->len] = '\0';
     }
 }
 

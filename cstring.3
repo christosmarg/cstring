@@ -13,7 +13,7 @@ object.
 Deallocate string.
 .TP
 .BR void\ cstring_assign(cstring\ *cs,\ const\ char\ *s)
-Assign a new string to the current string.
+Assign a new string to current string.
 .TP
 .BR void\ cstring_append(cstring\ *cs,\ const\ char\ *s)
 Append to end of string.
@@ -28,13 +28,13 @@ Insert at a specific index.
 Erase a portion of the string.
 .TP
 .BR void\ cstring_erase_matching(cstring\ *cs,\ const\ char\ *s)
-Erase first match from the string.
+Erase first match from string.
 .TP
 .BR void\ cstring_erase_all_matching(cstring\ *cs,\ const\ char\ *s)
-Erase all matches from the string.
+Erase all matches from string.
 .TP
-.BR void\ cstring_trim(cstring\ *cs,\ char\ c)
-Trim character from string.
+.BR void\ cstring_trim(cstring\ *cs,\ const\ char\ *s)
+Trim characters from string.
 .TP
 .BR void\ cstring_push_back(cstring\ *cs,\ char\ c)
 Add a character at the end of the string.
@@ -63,11 +63,17 @@ Erase the whole string.
 .BR size_t\ cstring_find(const\ cstring\ *cs,\ const\ char\ *s)
 Find first occurence of a pattern in string.
 .TP
-.BR size_t\ cstring_find_first_of(const\ cstring\ *cs,\ char\ c)
-Find first occurence of a character in string.
+.BR size_t\ cstring_find_first_of(const\ cstring\ *cs,\ const\ char\ *s)
+Find first occurence of specified characters in string.
 .TP
-.BR size_t\ cstring_find_last_of(const\ cstring\ *cs,\ char\ c)
-Find last occurence of a character in string.
+.BR size_t\ cstring_find_first_not_of(const\ cstring\ *cs,\ const\ char\ *s)
+Find the first character that does not match any of the specified characters.
+.TP
+.BR size_t\ cstring_find_last_of(const\ cstring\ *cs,\ const\ char\ *s)
+Find last occurence of specified characters in string.
+.TP
+.BR size_t\ cstring_find_last_not_of(const\ cstring\ *cs,\ const\ char\ *s)
+Find the last character that does not match any of the specified characters.
 .TP
 .BR char\ cstring_front(const\ cstring\ *cs)
 Returns the first character of the string.
@@ -111,35 +117,11 @@ Read a line from a
 stream. Similar behavior to
 .I stdio's\ getline
 .SH MACROS
-The following macros should be used carefully
 .TP
 .BR CSTRING_OUT_OF_BOUNDS(cs,\ pos)
 Check if
 .I pos
 is out of bounds.
-.TP
-.BR CSTRING_EXCEEDS_CAPACITY(len,\ cap)
-Check if
-.I len
-is more than
-.I cap
-in order to resize the string.
-.TP
-.BR CSTRING_FIND_OCCURENCE(cs,\ s,\ func)
-Although it should be used internally, this macro
-returns the index at which
-.I s
-occurs in the string according to
-.I func
-which is used as a callback function, although it is
-meant to support
-.I strstr
-,
-.I strchr
-and
-.I strrchr
-from
-.I string.h
 .SH CONSTANTS
 .TP
 .BR CSTRING_NPOS
@@ -159,5 +141,11 @@ leaks.
 .P
 The recommended way of initializing an empty string is by doing
 .I cstring foo = cstring_create("")
+.P
+If a function requires a
+.I char *
+you can access the
+.I .str
+field and pass it to the function.
 .SH AUTHORS
 Christos Margiolis <christos@christosmarg.xyz>

@@ -44,8 +44,14 @@ main(int argc, char **argv)
     cstring_erase_all_matching(&s, "hello");
     printf("cstring_erase_all_matching: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
 
-    cstring_trim(&s, ' ');
+    cstring_trim(&s, " ");
     printf("cstring_trim: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
+
+    cstring_insert(&s, "New text", 2);
+    printf("cstring_insert: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
+
+    cstring_prepend(&s, "OK");
+    printf("cstring_prepend: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
 
     cstring_delete(&s);
     if (cstring_empty(&s)) printf("cstring_delete: Deleted string.\n");
