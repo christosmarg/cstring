@@ -17,6 +17,10 @@ main(int argc, char **argv)
     cstring_prepend(&s, "OK");
     printf("cstring_prepend: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
 
+    // BUG
+    /*for (int i = 0; i < 50; i++)*/
+        /*cstring_push_back(&s, 'c');*/
+
     cstring_push_back(&s, 'c');
     printf("cstring_push_back: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
 
@@ -50,11 +54,8 @@ main(int argc, char **argv)
     cstring_trim(&s, " ");
     printf("cstring_trim: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
 
-    cstring_insert(&s, "New text", 2);
-    printf("cstring_insert: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
-
     cstring_delete(&s);
-    if (cstring_empty(&s)) printf("cstring_delete: Deleted string.\n");
+    if (cstring_empty(&s)) puts("cstring_delete: Deleted string.");
 
     return 0;
 }

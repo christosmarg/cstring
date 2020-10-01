@@ -125,11 +125,40 @@ stream. Similar behavior to
 Check if
 .I pos
 is out of bounds.
+.TP
+.BR CSTRING_MALLOC(ptr,\ size)
+Allocate memory with error cheking.
+.P
+The following macros can only be used in debug mode:
+.TP
+.BR CSTRING_DBG_LOG(fmt,\ ...)
+Prints a message in the format of "DEBUG: file:line:func(): msg".
+.TP
+.BR CSTRING_DBG_LOG_STR_INFO(cs)
+Uses
+.I CSTRING_DBG_LOG
+to print all the contents of a
+.I cstring
+struct. The argument has to be a pointer.
+.TP
+.BR CSTRING_DBG_LOG_STR_INFO_NPTR(cs)
+Uses
+.I CSTRING_DBG_LOG
+to print all the contents of a
+.I cstring
+struct. The argument has to be a non-pointer.
 .SH CONSTANTS
 .TP
 .BR CSTRING_NPOS
 This constant signifies that a pattern hasn't been found inside
 the string. It's value is -1.
+.SH OPTIONS
+.TP
+.BR CSTRING_DEBUG
+Runs in debug mode if it is defined. In order to define it compile
+the library with the
+.I -DCSTRING_DEBUG
+option.
 .SH USAGE
 You must
 .B always

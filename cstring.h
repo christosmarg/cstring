@@ -12,6 +12,26 @@ extern "C" {
 #define CSTRING_NPOS -1
 #define CSTRING_OUT_OF_BOUNDS(cs, pos) ((pos) > cs->len)
 
+#define CSTRING_MALLOC(ptr, size) do {                               \
+    ptr = (char *)malloc((size));                                    \
+    if (ptr == NULL)                                                 \
+        fputs("CSTRING_MALLOC(): cannot allocate memory\n", stderr); \
+} while (0)
+
+#ifdef CSTRING_DBG
+#define CSTRING_DBG_LOG(fmt, ...)                                    \
+    fprintf(stderr, "DEBUG: %s:%d:%s(): " fmt,                       \
+            __FILE__, __LINE__, __func__, __VA_ARGS__)
+
+#define CSTRING_DBG_LOG_STR_INFO(cs)                                 \
+    CSTRING_DBG_LOG("STR: %s | LEN: %ld | CAP: %ld\n",               \
+            cs->str, cs->len, cs->capacity)
+
+#define CSTRING_DBG_LOG_STR_INFO_NPTR(cs)                            \
+    CSTRING_DBG_LOG("STR: %s | LEN: %ld | CAP: %ld\n",               \
+            cs.str, cs.len, cs.capacity)
+#endif /* CSTRING_DBG */
+
 typedef struct cstring {
     char   *str;
     size_t  len;

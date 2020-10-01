@@ -23,6 +23,9 @@ cstring_create(const char *s)
     cs.len = strlen(s);
     cs.str = cstring_copy(s);
     cstring_resize(&cs, cs.len << 1);
+#ifdef CSTRING_DBG
+    CSTRING_DBG_LOG_STR_INFO_NPTR(cs);
+#endif /* CSTRING_DBG */
     return cs;
 }
 
@@ -44,6 +47,9 @@ cstring_assign(cstring *cs, const char *s)
     if (!cstring_empty(cs)) free(cs->str);
     cs->str = cstring_copy(s);
     cs->len = newlen;
+#ifdef CSTRING_DBG
+    CSTRING_DBG_LOG_STR_INFO(cs);
+#endif /* CSTRING_DBG */
 }
 
 void
@@ -52,16 +58,20 @@ cstring_insert(cstring *cs, const char *s, size_t i)
     if (!CSTRING_OUT_OF_BOUNDS(cs, i) && s != NULL) {
         size_t slen = strlen(s);
         size_t newlen = cs->len + slen;
-        char *tmp = (char *)malloc(newlen + 1);
-        memcpy(tmp, cs->str, i);
-        memcpy(tmp + i, s, slen);
-        memcpy(tmp + slen + i, cs->str + i , newlen - slen - i);
+        char *tmp;
+        CSTRING_MALLOC(tmp, newlen + 1);
         if (CSTRING_EXCEEDS_CAPACITY(newlen, cs->capacity))
             cstring_resize(cs, newlen << 1);
+        memcpy(tmp, cs->str, i);
+        memcpy(tmp + i, s, slen);
+        memcpy(tmp + slen + i, cs->str + i, newlen - slen - i);
         free(cs->str);
         cs->len = newlen;
         cs->str = tmp;
         cs->str[cs->len] = '\0';
+#ifdef CSTRING_DBG
+    CSTRING_DBG_LOG_STR_INFO(cs);
+#endif /* CSTRING_DBG */
     }
 }
 
@@ -73,7 +83,8 @@ cstring_erase(cstring *cs, size_t pos, size_t len)
     &&  !CSTRING_OUT_OF_BOUNDS(cs, len))
     {
         size_t newlen = cs->len - len;
-        char *tmp = (char *)malloc(newlen + 1);
+        char *tmp;
+        CSTRING_MALLOC(tmp, newlen + 1);
         memcpy(tmp, cs->str, pos); // pos + 1??
         memcpy(tmp + pos, cs->str + pos + len, newlen);
         free(cs->str);
@@ -116,13 +127,17 @@ cstring_push_back(cstring *cs, char c)
         cstring_resize(cs, cs->len << 1);
     cs->str[cs->len] = c;
     cs->str[++cs->len] = '\0';
+#ifdef CSTRING_DBG
+    CSTRING_DBG_LOG_STR_INFO(cs);
+#endif /* CSTRING_DBG */
 }
 
 void
 cstring_pop_back(cstring *cs)
 {
     if (cs->len > 0) {
-        char *tmp = (char *)malloc(cs->len);
+        char *tmp;
+        CSTRING_MALLOC(tmp, cs->len);
         memcpy(tmp, cs->str, cs->len);
         free(cs->str);
         tmp[--cs->len] = '\0';
@@ -175,7 +190,7 @@ void
 cstring_clear(cstring *cs)
 {
     if (!cstring_empty(cs)) free(cs->str);
-    cs->str = (char *)malloc(1);
+    CSTRING_MALLOC(cs->str, 1);
     cs->str[0] = '\0';
     cs->len = 0;
     cs->capacity = 0;
@@ -264,7 +279,8 @@ char *
 cstring_copy(const char *s)
 {
     size_t len = strlen(s);
-    char *tmp = (char *)malloc(len + 1);
+    char *tmp;
+    CSTRING_MALLOC(tmp, len + 1);
     memcpy(tmp, s, len + 1);
     tmp[len] = '\0';
     return tmp;
@@ -273,8 +289,11 @@ cstring_copy(const char *s)
 void
 cstring_resize(cstring *cs, size_t newcapacity)
 {
-    cs->str = (char *)realloc(cs->str, newcapacity);
+    cs->str = (char *)realloc(cs->str, newcapacity + 1);
     cs->capacity = newcapacity;
+#ifdef CSTRING_DBG
+    CSTRING_DBG_LOG_STR_INFO(cs);
+#endif /* CSTRING_DBG */
 }
 
 cstring *

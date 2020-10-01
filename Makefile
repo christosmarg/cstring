@@ -12,7 +12,7 @@ AR = ar
 ARFLAGS = rs
 CC = gcc
 CPPFLAGS += -Iinclude -pedantic
-CFLAGS += -Wall -std=c99 -O3
+CFLAGS += -Wall -std=c99 -O3 -DCSTRING_DBG
 LDFLAGS += -Llib
 #LDLIBS += 
 
@@ -39,7 +39,7 @@ install: all
 	${CP} ${MAN3} ${DESTDIR}${MAN_DIR}
 	chmod 644 ${DESTDIR}${MAN_DIR}/${MAN3}
 
-uninstall: all
+uninstall:
 	sudo ${RM} ${DESTDIR}${HDR_DIR}/${LIB}.h
 	sudo ${RM} ${DESTDIR}${LIB_DIR}/lib${LIB}.a
 	sudo ${RM} ${DESTDIR}${MAN_DIR}/${MAN3}
