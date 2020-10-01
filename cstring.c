@@ -21,10 +21,8 @@ cstring_create(const char *s)
 {
     cstring cs;
     cs.len = strlen(s);
-    cs.capacity = cs.len << 1;
-    cs.str = (char *)malloc(cs.capacity + 1);
-    memcpy(cs.str, s, cs.len + 1);
-    cs.str[cs.len] = '\0';
+    cs.str = cstring_copy(s);
+    cstring_resize(&cs, cs.len << 1);
     return cs;
 }
 
@@ -32,8 +30,8 @@ void
 cstring_delete(cstring *cs)
 {
     if (!cstring_empty(cs)) free(cs->str);
-    cs->str      = NULL;
-    cs->len      = 0;
+    cs->str = NULL;
+    cs->len = 0;
     cs->capacity = 0;
 }
 
@@ -49,37 +47,15 @@ cstring_assign(cstring *cs, const char *s)
 }
 
 void
-cstring_append(cstring *cs, const char *s)
-{
-    if (!cstring_empty(cs)) {
-        size_t newlen = cs->len + strlen(s);
-        if (CSTRING_EXCEEDS_CAPACITY(newlen, cs->capacity))
-            cstring_resize(cs, newlen << 1);
-        strcat(cs->str, s);
-        cs->len = newlen;
-    }
-    else cstring_assign(cs, s);
-}
-
-void
-cstring_prepend(cstring *cs, const char *s)
-{
-    cstring_insert(cs, s, 0);
-}
-
-void
 cstring_insert(cstring *cs, const char *s, size_t i)
 {
-    if (!CSTRING_OUT_OF_BOUNDS(cs, i)
-    &&  !cstring_empty(cs) // useless check?
-    &&  s != NULL)
-    {
+    if (!CSTRING_OUT_OF_BOUNDS(cs, i) && s != NULL) {
         size_t slen = strlen(s);
         size_t newlen = cs->len + slen;
         char *tmp = (char *)malloc(newlen + 1);
         memcpy(tmp, cs->str, i);
         memcpy(tmp + i, s, slen);
-        memcpy(tmp + i + slen, cs->str + i, cs->len);
+        memcpy(tmp + slen + i, cs->str + i , newlen - slen - i);
         if (CSTRING_EXCEEDS_CAPACITY(newlen, cs->capacity))
             cstring_resize(cs, newlen << 1);
         free(cs->str);
@@ -136,8 +112,8 @@ cstring_trim(cstring *cs, const char *s)
 void
 cstring_push_back(cstring *cs, char c)
 {
-    if (CSTRING_EXCEEDS_CAPACITY(cs->len + 1, cs->capacity))
-        cstring_resize(cs, (cs->len + 1) << 1);
+    if (CSTRING_EXCEEDS_CAPACITY(cs->len, cs->capacity))
+        cstring_resize(cs, cs->len << 1);
     cs->str[cs->len] = c;
     cs->str[++cs->len] = '\0';
 }
@@ -196,12 +172,6 @@ cstring_swap(cstring *lhs, cstring *rhs)
 }
 
 void
-cstring_shrink_to_fit(cstring *cs)
-{
-    cstring_resize(cs, cs->len);
-}
-
-void
 cstring_clear(cstring *cs)
 {
     if (!cstring_empty(cs)) free(cs->str);
@@ -211,11 +181,14 @@ cstring_clear(cstring *cs)
     cs->capacity = 0;
 }
 
+#define CSTRING_CHECK(cs, s)      \
+    if (cstring_empty(cs) || !*s) \
+        return CSTRING_NPOS
+
 size_t
 cstring_find(const cstring *cs, const char *s)
 {
-    if (cstring_empty(cs) || !*s)
-        return CSTRING_NPOS;
+    CSTRING_CHECK(cs, s);
     CSTRING_FIND_OCCURENCE(cs, s, strstr);
     return CSTRING_NPOS;
 }
@@ -223,17 +196,29 @@ cstring_find(const cstring *cs, const char *s)
 size_t
 cstring_rfind(const cstring *cs, const char *s)
 {
-    if (cstring_empty(cs) || !*s)
-        return CSTRING_NPOS;
-    /* IMPLEMENT */
-    return CSTRING_NPOS;
+    CSTRING_CHECK(cs, s);
+    /* SIMPLIFY */
+    int found;
+    size_t idx = -1;
+    size_t slen = strlen(s);
+    size_t  i = 0, j;
+    for (; i <= cs->len - slen; i++) {
+        found = 1;
+        for (j = 0; j < slen; j++) {
+            if (cs->str[i + j] != s[j]) {
+                found = 0;
+                break;
+            }
+        }
+        if (found) idx = i;
+    }
+    return (idx == -1 ? CSTRING_NPOS : idx);
 }
 
 size_t
 cstring_find_first_of(const cstring *cs, const char *s)
 {
-    if (cstring_empty(cs) || !*s)
-        return CSTRING_NPOS;
+    CSTRING_CHECK(cs, s);
     for (; *s; s++) {
         CSTRING_FIND_OCCURENCE(cs, *s, strchr);
     }
@@ -243,8 +228,7 @@ cstring_find_first_of(const cstring *cs, const char *s)
 size_t
 cstring_find_first_not_of(const cstring *cs, const char *s)
 {
-    if (cstring_empty(cs) || !*s)
-        return CSTRING_NPOS;
+    CSTRING_CHECK(cs, s);
     size_t i = 0;
     for (; i < cs->len; i++)
         if (!cstring_is_one_of(cs->str[i], s))
@@ -255,8 +239,7 @@ cstring_find_first_not_of(const cstring *cs, const char *s)
 size_t
 cstring_find_last_of(const cstring *cs, const char *s)
 {
-    if (cstring_empty(cs) || !*s)
-        return CSTRING_NPOS;
+    CSTRING_CHECK(cs, s);
     size_t i = *(s + strlen(s));
     for (; i >= 0; i--) {
         CSTRING_FIND_OCCURENCE(cs, s[i], strrchr);
@@ -267,8 +250,7 @@ cstring_find_last_of(const cstring *cs, const char *s)
 size_t
 cstring_find_last_not_of(const cstring *cs, const char *s)
 {
-    if (cstring_empty(cs) || !*s)
-        return CSTRING_NPOS;
+    CSTRING_CHECK(cs, s);
     size_t i = cs->len;
     for (; i >= 0; i--)
         if (!cstring_is_one_of(cs->str[i], s))
@@ -276,47 +258,7 @@ cstring_find_last_not_of(const cstring *cs, const char *s)
     return CSTRING_NPOS;
 }
 
-char
-cstring_front(const cstring *cs)
-{
-    return cs->str[0];
-}
-
-char
-cstring_back(const cstring *cs)
-{
-    return (!cstring_empty(cs) ? cs->str[cs->len - 1] : cs->str[0]);
-}
-
-int
-cstring_empty(const cstring *cs)
-{
-    return (cs->str == NULL && cs->len == 0);
-}
-
-int
-cstring_starts_with_str(const cstring *cs, const char *s)
-{
-    return (cstring_find(cs, s) == 0);
-}
-
-int
-cstring_ends_with_str(const cstring *cs, const char *s)
-{
-    return (cstring_find(cs, s) == cs->len - strlen(s));
-}
-
-int
-cstring_starts_with_char(const cstring *cs, char c)
-{
-    return (cs->str[0] == c);
-}
-
-int
-cstring_ends_with_char(const cstring *cs, char c)
-{
-    return (cs->str[cs->len] = c);
-}
+#undef CSTR_CHECK
 
 char *
 cstring_copy(const char *s)
@@ -331,11 +273,8 @@ cstring_copy(const char *s)
 void
 cstring_resize(cstring *cs, size_t newcapacity)
 {
-    if (!cstring_empty(cs)) {
-        cs->capacity = newcapacity;
-        cs->str = (char *)realloc(cs->str, cs->capacity + 1);
-        cs->str[cs->len] = '\0';
-    }
+    cs->str = (char *)realloc(cs->str, newcapacity);
+    cs->capacity = newcapacity;
 }
 
 cstring *
@@ -348,34 +287,4 @@ cstring_getline(FILE *fd, cstring *cs, char delim)
         else cstring_push_back(cs, c);
     }
     return (c == EOF) ? NULL : cs;
-}
-
-int
-cstring_equals(const cstring *lhs, const cstring *rhs)
-{
-    return (strcmp(lhs->str, rhs->str) == 0);
-}
-
-int
-cstring_greater(const cstring *lhs, const cstring *rhs)
-{
-    return (strcmp(lhs->str, rhs->str) > 0);
-}
-
-int
-cstring_greater_or_equals(const cstring *lhs, const cstring *rhs)
-{
-    return (strcmp(lhs->str, rhs->str) >= 0);
-}
-
-int
-cstring_less(const cstring *lhs, const cstring *rhs)
-{
-    return (strcmp(lhs->str, rhs->str) < 0);
-}
-
-int
-cstring_less_or_equals(const cstring *lhs, const cstring *rhs)
-{
-    return (strcmp(lhs->str, rhs->str) <= 0);
 }

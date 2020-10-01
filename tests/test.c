@@ -8,11 +8,14 @@ main(int argc, char **argv)
     cstring s = cstring_create("Hello world");
     printf("cstring_create: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
 
-    cstring_append(&s, "Append");
-    printf("cstring_append: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
-
     cstring_assign(&s, "New string");
     printf("cstring_assign: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
+
+    cstring_append(&s, "Appended text");
+    printf("cstring_append: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
+
+    cstring_prepend(&s, "OK");
+    printf("cstring_prepend: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
 
     cstring_push_back(&s, 'c');
     printf("cstring_push_back: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
@@ -49,9 +52,6 @@ main(int argc, char **argv)
 
     cstring_insert(&s, "New text", 2);
     printf("cstring_insert: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
-
-    cstring_prepend(&s, "OK");
-    printf("cstring_prepend: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
 
     cstring_delete(&s);
     if (cstring_empty(&s)) printf("cstring_delete: Deleted string.\n");
