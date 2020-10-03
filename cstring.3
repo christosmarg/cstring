@@ -134,19 +134,18 @@ The following macros can only be used in debug mode:
 .BR CSTRING_DBG_LOG(fmt,\ ...)
 Prints a message in the format of "DEBUG: file:line:func(): msg".
 .TP
-.BR CSTRING_DBG_LOG_STR_INFO(cs)
-Uses
-.I CSTRING_DBG_LOG
-to print all the contents of a
+.BR CSTRING_DBG_LOG_CSTR_INFO(cs)
+Print all the contents of a
 .I cstring
 struct. The argument has to be a pointer.
 .TP
-.BR CSTRING_DBG_LOG_STR_INFO_NPTR(cs)
-Uses
-.I CSTRING_DBG_LOG
-to print all the contents of a
+.BR CSTRING_DBG_LOG_CSTR_INFO_NPTR(cs)
+Print all the contents of a
 .I cstring
 struct. The argument has to be a non-pointer.
+.TP
+.BR CSTRING_DBG_LOG_STR_INFO(s, len)
+Print contents of a normal string.
 .SH CONSTANTS
 .TP
 .BR CSTRING_NPOS

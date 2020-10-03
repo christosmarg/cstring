@@ -23,13 +23,16 @@ extern "C" {
     fprintf(stderr, "DEBUG: %s:%d:%s(): " fmt,                       \
             __FILE__, __LINE__, __func__, __VA_ARGS__)
 
-#define CSTRING_DBG_LOG_STR_INFO(cs)                                 \
+#define CSTRING_DBG_LOG_CSTR_INFO(cs)                                \
     CSTRING_DBG_LOG("STR: %s | LEN: %ld | CAP: %ld\n",               \
             cs->str, cs->len, cs->capacity)
 
-#define CSTRING_DBG_LOG_STR_INFO_NPTR(cs)                            \
+#define CSTRING_DBG_LOG_CSTR_INFO_NPTR(cs)                           \
     CSTRING_DBG_LOG("STR: %s | LEN: %ld | CAP: %ld\n",               \
             cs.str, cs.len, cs.capacity)
+
+#define CSTRING_DBG_LOG_STR_INFO(s, len)                             \
+    CSTRING_DBG_LOG("S: %s | LEN: %ld\n", s, len)
 #endif /* CSTRING_DBG */
 
 typedef struct cstring {
@@ -60,6 +63,7 @@ extern size_t   cstring_find_first_not_of(const cstring *,const  char *);
 extern size_t   cstring_find_last_of(const cstring *, const char *);
 extern size_t   cstring_find_last_not_of(const cstring *, const char *);
 extern char    *cstring_copy(const char *);
+//extern void     cstring_move(cstring *cs, const char *);
 extern void     cstring_resize(cstring *, size_t);
 extern cstring *cstring_getline(FILE *, cstring *, char);
 

@@ -8,6 +8,7 @@ main(int argc, char **argv)
     cstring s = cstring_create("Hello world");
     printf("cstring_create: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
 
+    // BUG
     cstring_assign(&s, "New string");
     printf("cstring_assign: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
 
@@ -16,10 +17,6 @@ main(int argc, char **argv)
 
     cstring_prepend(&s, "OK");
     printf("cstring_prepend: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
-
-    // BUG
-    /*for (int i = 0; i < 50; i++)*/
-        /*cstring_push_back(&s, 'c');*/
 
     cstring_push_back(&s, 'c');
     printf("cstring_push_back: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
@@ -44,6 +41,7 @@ main(int argc, char **argv)
     cstring_replace_str(&s, "hell", 0, strlen("hell"));
     printf("cstring_replace_str: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
 
+    // BUGS
     cstring_erase(&s, 1, 4);
     printf("cstring_erase: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
 
