@@ -32,7 +32,7 @@ extern "C" {
             cs.str, cs.len, cs.capacity)
 
 #define CSTRING_DBG_LOG_STR_INFO(s, len)                             \
-    CSTRING_DBG_LOG("S: %s | LEN: %ld\n", s, len)
+    CSTRING_DBG_LOG("S: %s | LEN: %ld\n", (s), (len))
 #endif /* CSTRING_DBG */
 
 typedef struct cstring {
@@ -40,6 +40,12 @@ typedef struct cstring {
     size_t  len;
     size_t  capacity;
 } cstring;
+
+enum cstring_flags {
+    CSTRING_ASCENDING,
+    CSTRING_DESCENDING,
+    CSTRING_CALLBACK
+};
 
 extern cstring  cstring_create(const char *);
 extern void     cstring_delete(cstring *);
@@ -55,6 +61,10 @@ extern void     cstring_replace_char(cstring *, size_t, char);
 extern void     cstring_replace_str(cstring *, const char *, size_t, size_t);
 extern cstring  cstring_substr(const cstring *, size_t, size_t);
 extern void     cstring_swap(cstring *, cstring *);
+extern void     cstring_sort(cstring **, size_t, enum cstring_flags,
+                             int (*)(const void *, const void *));
+extern void     cstring_sort_chars(cstring *cs, enum cstring_flags,
+                                   int (*)(const void *, const void *));
 extern void     cstring_clear(cstring *);
 extern size_t   cstring_find(const cstring *, const char *);
 extern size_t   cstring_rfind(const cstring *, const char *);
@@ -63,7 +73,6 @@ extern size_t   cstring_find_first_not_of(const cstring *,const  char *);
 extern size_t   cstring_find_last_of(const cstring *, const char *);
 extern size_t   cstring_find_last_not_of(const cstring *, const char *);
 extern char    *cstring_copy(const char *);
-//extern void     cstring_move(cstring *cs, const char *);
 extern void     cstring_resize(cstring *, size_t);
 extern cstring *cstring_getline(FILE *, cstring *, char);
 

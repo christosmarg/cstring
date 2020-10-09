@@ -1,7 +1,44 @@
 .TH cstring 3
 .SH NAME
-cstring \- A simple and lightweight string library for C inspired by C++'s
+.B cstring
+\- A simple and lightweight string library for C inspired by C++'s
 STL string class
+.SH SYNOPSIS
+#include <cstring.h>
+.SH DESCRIPTION
+.P
+The
+.B cstring
+library offers a lightweight and fast way to manage
+strings with a wide range of useful functions.
+.P
+A program using
+.B cstring
+has to be linked using the
+.B \-lcstring
+option.
+.P
+In case you want to run the program in debug mode, compile
+it with the
+.B -DCSTRING_DEBUG
+option.
+.SH STRUCTURES AND ENUMS
+.TP
+.BR cstring
+typedef struct cstring {
+    char   *str;      /* contents of string */
+    size_t  len;      /* string length */
+    size_t  capacity; /* string capacity */
+.br
+};
+.TP
+.BR cstring_flags
+enum cstring_flags {
+    CSTRING_ASCENDING,  /* sort in ascending order */
+    CSTRING_DESCENDING, /* sort in descending order */
+    CSTRING_CALLBACK    /* use your own sort function */
+.br
+};
 .SH FUNCTIONS
 .TP
 .BR cstring\ cstring_create(const\ char\ *s)
@@ -53,6 +90,20 @@ Extract a substring from current string.
 .TP
 .BR void\ cstring_swap(cstring\ *lhs,\ cstring\ *rhs)
 Swap contents of two strings.
+.TP
+.BR void\ cstring_sort(cstring\ **cs,\ size_t\ len,\ enum\ cstring_flags\ flags,\ int\ (*callback)(const\ void\ *lhs,\ const\ void\ *rhs))
+Sort an array of cstrings. If you want to use the builtin comparison pass
+.I NULL
+in the last argument. In case you want to use your own callback use the
+.I CSTRING_CALLBACK
+flag and pass your own callback function in the last argument.
+.TP
+.BR void\ cstring_sort_chars(cstring\ *cs,\ enum\ cstring_flags\ flags,\ int\ (*callback)(const\ void\ *lhs,\ const\ void\ *rhs))
+Sort a cstring's contents. If you want to use the builtin comparison pass
+.I NULL
+in the last argument. In case you want to use your own callback use the
+.I CSTRING_CALLBACK
+flag and pass your own callback function in the last argument.
 .TP
 .BR void\ cstring_shrink_to_fit(cstring\ *cs)
 Reduce string's capacity to its size.
@@ -151,13 +202,6 @@ Print contents of a normal string.
 .BR CSTRING_NPOS
 This constant signifies that a pattern hasn't been found inside
 the string. It's value is -1.
-.SH OPTIONS
-.TP
-.BR CSTRING_DEBUG
-Runs in debug mode if it is defined. In order to define it compile
-the library with the
-.I -DCSTRING_DEBUG
-option.
 .SH USAGE
 You must
 .B always

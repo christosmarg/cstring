@@ -2,6 +2,12 @@
 
 #define CSTRING_EXCEEDS_CAPACITY(len, cap)  ((len) >= (cap))
 
+#define CSTRING_FIND_OCCURENCE(cs, s, func) do {                          \
+    char *_found;                                                         \
+    if ((_found = func(cs->str, (s))) != NULL)                            \
+        return (_found - cs->str);                                        \
+} while (0)
+
 #ifdef CSTRING_DBG
 #define CSTRING_FREE(cs) do {                                             \
     CSTRING_DBG_LOG("Before CSTRING_FREE: %s\n", cs->str);                \
@@ -13,9 +19,9 @@
 #define CSTRING_EXPECTED_ERASE_STR(cs, pos, len) do {                     \
     CSTRING_DBG_LOG("%s", "CSTRING_EXPECTED_ERASE_STR: ");                \
     size_t _i;                                                            \
-    for (_i = 0; _i < pos; _i++)                                          \
+    for (_i = 0; _i < (pos); _i++)                                        \
         printf("%c", cs->str[_i]);                                        \
-    for (_i = pos + len; _i < cs->len; _i++)                              \
+    for (_i = (pos) + (len); _i < cs->len; _i++)                          \
         printf("%c", cs->str[_i]);                                        \
     printf("\n");                                                         \
 } while (0)
@@ -29,12 +35,6 @@
 } while (0)
 #endif /* CSTRING_DBG */
 
-#define CSTRING_FIND_OCCURENCE(cs, s, func) do {                          \
-    char *_found;                                                         \
-    if ((_found = func(cs->str, (s))) != NULL)                            \
-        return (_found - cs->str);                                        \
-} while (0)
-
 static int
 cstring_is_one_of(char c, const char *s)
 {
@@ -42,6 +42,30 @@ cstring_is_one_of(char c, const char *s)
         if (*s == c)
             return 1;
     return 0;
+}
+
+static inline int
+cstring_cmp_greater(const void *lhs, const void *rhs)
+{
+    return cstring_greater((cstring *)lhs, (cstring *)rhs);
+}
+
+static inline int
+cstring_cmp_less(const void *lhs, const void *rhs)
+{
+    return cstring_less((cstring *)lhs, (cstring *)rhs);
+}
+
+static inline int
+cstring_cmp_char_greater(const void *lhs, const void *rhs)
+{
+    return (*(char *)lhs > *(char *)rhs);
+}
+
+static inline int
+cstring_cmp_char_less(const void *lhs, const void *rhs)
+{
+    return (*(char *)lhs < *(char *)rhs);
 }
 
 cstring
@@ -219,6 +243,33 @@ cstring_swap(cstring *lhs, cstring *rhs)
 }
 
 void
+cstring_sort(cstring **cs,
+             size_t len,
+             enum cstring_flags flags,
+             int (*callback)(const void *lhs, const void *rhs))
+{
+    if (flags == CSTRING_ASCENDING)
+        qsort(cs, len, sizeof(cstring *), cstring_cmp_greater);
+    else if (flags == CSTRING_DESCENDING)
+        qsort(cs, len, sizeof(cstring *), cstring_cmp_less);
+    else if (flags == CSTRING_CALLBACK)
+        qsort(cs, len, sizeof(cstring *), callback);
+}
+
+void
+cstring_sort_chars(cstring *cs,
+                   enum cstring_flags flags,
+                   int (*callback)(const void *lhs, const void *rhs))
+{
+    if (flags == CSTRING_ASCENDING)
+        qsort(cs->str, cs->len, sizeof(char), cstring_cmp_char_greater);
+    else if (flags == CSTRING_DESCENDING)
+        qsort(cs->str, cs->len, sizeof(char), cstring_cmp_char_less);
+    else if (flags == CSTRING_CALLBACK)
+        qsort(cs->str, cs->len, sizeof(char), callback);
+}
+
+void
 cstring_clear(cstring *cs)
 {
     CSTRING_FREE(cs);
@@ -228,8 +279,8 @@ cstring_clear(cstring *cs)
     cs->capacity = 0;
 }
 
-#define CSTRING_CHECK(cs, s)      \
-    if (cstring_empty(cs) || !*s) \
+#define CSTRING_CHECK(cs, s)        \
+    if (cstring_empty(cs) || !*(s)) \
         return CSTRING_NPOS
 
 size_t
