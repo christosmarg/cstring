@@ -10,7 +10,10 @@ extern "C" {
 #endif /* __cplusplus */
 
 #define CSTRING_NPOS -1
+#define CSTRING_INIT_EMPTY ""
 #define CSTRING_OUT_OF_BOUNDS(cs, pos) ((pos) > cs->len)
+#define CSTRING_ARR_LEN(arr)           ((size_t)sizeof((arr)) / sizeof((arr)[0]))
+#define CSTRING_FLAG_CHECK(flag, bit)  (((flag) & (int)(bit)) == (int)(bit))
 
 #define CSTRING_MALLOC(ptr, size) do {                               \
     ptr = (char *)malloc((size));                                    \
@@ -35,17 +38,21 @@ extern "C" {
     CSTRING_DBG_LOG("S: %s | LEN: %ld\n", (s), (len))
 #endif /* CSTRING_DBG */
 
-typedef struct cstring {
+struct cstring {
     char     *str;
     size_t    len;
     size_t    capacity;
-} cstring;
-
-enum cstring_flags {
-    CSTRING_ASCENDING,
-    CSTRING_DESCENDING,
-    CSTRING_CALLBACK
 };
+
+enum cstring_sort_flags {
+    CSTRING_SORT_ASCENDING  = 1 << 0,
+    CSTRING_SORT_DESCENDING = 1 << 1,
+    CSTRING_SORT_CALLBACK   = 1 << 2,
+    CSTRING_SORT_REST       = 1 << 3
+};
+
+typedef struct cstring cstring;
+typedef int (*cstring_sort_callback)(const void *, const void *);
 
 extern cstring    cstring_create(const char *);
 extern void       cstring_delete(cstring *);
@@ -61,10 +68,12 @@ extern void       cstring_replace_char(cstring *, size_t, char);
 extern void       cstring_replace_str(cstring *, const char *, size_t, size_t);
 extern cstring    cstring_substr(const cstring *, size_t, size_t);
 extern void       cstring_swap(cstring *, cstring *);
-extern void       cstring_sort(cstring **, size_t, enum cstring_flags,
-                               int (*)(const void *, const void *));
-extern void       cstring_sort_chars(cstring *cs, enum cstring_flags,
-                                     int (*)(const void *, const void *));
+extern void       cstring_sort_partial(cstring **, size_t, size_t,
+                                       enum cstring_sort_flags,
+                                       cstring_sort_callback);
+extern void       cstring_sort_chars_partial(cstring *cs, size_t, size_t,
+                                             enum cstring_sort_flags,
+                                             cstring_sort_callback);
 extern void       cstring_clear(cstring *);
 extern size_t     cstring_find(const cstring *, const char *);
 extern size_t     cstring_rfind(const cstring *, const char *);
@@ -76,9 +85,14 @@ extern char      *cstring_copy(const char *);
 extern void       cstring_resize(cstring *, size_t);
 extern cstring   *cstring_getline(FILE *, cstring *, char);
 
+
 /* static inlines */
 static inline void    cstring_prepend(cstring *, const char *);
 static inline void    cstring_append(cstring *, const char *);
+static inline void    cstring_sort(cstring **, size_t, enum cstring_sort_flags,
+                                   cstring_sort_callback);
+static inline void    cstring_sort_chars(cstring *, enum cstring_sort_flags,
+                                         cstring_sort_callback);
 static inline void    cstring_shrink_to_fit(cstring *);
 static inline int     cstring_empty(const cstring *);
 static inline char    cstring_front(const cstring *);
@@ -104,6 +118,23 @@ static inline void
 cstring_append(cstring *cs, const char *s)
 {
     cstring_insert(cs, s, cs->len);
+}
+
+static inline void
+cstring_sort(cstring **cs,
+             size_t len,
+             enum cstring_sort_flags flags,
+             cstring_sort_callback callback)
+{
+    cstring_sort_partial(cs, 0, len, flags, callback);
+}
+
+static inline void
+cstring_sort_chars(cstring *cs,
+                   enum cstring_sort_flags flags,
+                   cstring_sort_callback callback)
+{
+    cstring_sort_chars_partial(cs, 0, cs->len, flags, callback);
 }
 
 static inline void

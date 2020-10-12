@@ -2,11 +2,15 @@
 
 // Compilation: gcc test.c -lcstring
 
+
 int
 main(int argc, char **argv)
 {
     cstring s = cstring_create("Hello world");
     printf("cstring_create: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
+
+    cstring_sort_chars(&s, CSTRING_SORT_ASCENDING, NULL);
+    printf("cstring_sort_chars: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
 
     // BUG
     cstring_assign(&s, "New string");

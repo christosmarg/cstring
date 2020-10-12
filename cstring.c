@@ -257,30 +257,41 @@ cstring_swap(cstring *lhs, cstring *rhs)
 }
 
 void
-cstring_sort(cstring **cs,
-             size_t len,
-             enum cstring_flags flags,
-             int (*callback)(const void *lhs, const void *rhs))
+cstring_sort_partial(cstring **cs,
+                     size_t pos,
+                     size_t len,
+                     enum cstring_sort_flags flags,
+                     cstring_sort_callback callback)
 {
-    if (flags == CSTRING_ASCENDING)
-        qsort(cs, len, sizeof(cstring *), cstring_cmp_greater);
-    else if (flags == CSTRING_DESCENDING)
-        qsort(cs, len, sizeof(cstring *), cstring_cmp_less);
-    else if (flags == CSTRING_CALLBACK)
-        qsort(cs, len, sizeof(cstring *), callback);
+    if (CSTRING_FLAG_CHECK(flags, CSTRING_SORT_REST)
+    ||  pos + len > len) /* maybe chanage out of bounds macro */
+        len -= pos;
+
+    if (CSTRING_FLAG_CHECK(flags, CSTRING_SORT_ASCENDING))
+        qsort(cs + pos, len, sizeof(cstring *), cstring_cmp_greater);
+    else if (CSTRING_FLAG_CHECK(flags, CSTRING_SORT_DESCENDING))
+        qsort(cs + pos, len, sizeof(cstring *), cstring_cmp_less);
+    else if (CSTRING_FLAG_CHECK(flags, CSTRING_SORT_CALLBACK))
+        qsort(cs + pos, len, sizeof(cstring *), callback);
 }
 
 void
-cstring_sort_chars(cstring *cs,
-                   enum cstring_flags flags,
-                   int (*callback)(const void *lhs, const void *rhs))
+cstring_sort_chars_partial(cstring *cs,
+                           size_t pos,
+                           size_t len,
+                           enum cstring_sort_flags flags,
+                           cstring_sort_callback callback)
 {
-    if (flags == CSTRING_ASCENDING)
-        qsort(cs->str, cs->len, sizeof(char), cstring_cmp_char_greater);
-    else if (flags == CSTRING_DESCENDING)
-        qsort(cs->str, cs->len, sizeof(char), cstring_cmp_char_less);
-    else if (flags == CSTRING_CALLBACK)
-        qsort(cs->str, cs->len, sizeof(char), callback);
+    if (CSTRING_FLAG_CHECK(flags, CSTRING_SORT_REST)
+    ||  CSTRING_OUT_OF_BOUNDS(cs, pos + len))
+        len = cs->len - pos;
+
+    if (CSTRING_FLAG_CHECK(flags, CSTRING_SORT_ASCENDING))
+        qsort(cs->str + pos, len, sizeof(char), cstring_cmp_char_greater);
+    else if (CSTRING_FLAG_CHECK(flags, CSTRING_SORT_DESCENDING))
+        qsort(cs->str + pos, len, sizeof(char), cstring_cmp_char_less);
+    else if (CSTRING_FLAG_CHECK(flags, CSTRING_SORT_CALLBACK))
+        qsort(cs->str + pos, len, sizeof(char), callback);
 }
 
 void
@@ -309,7 +320,7 @@ size_t
 cstring_rfind(const cstring *cs, const char *s)
 {
     CSTRING_CHECK(cs, s);
-    /* SIMPLIFY */
+    /*SIMPLIFY */
     int found;
     size_t idx = -1;
     size_t slen = strlen(s);

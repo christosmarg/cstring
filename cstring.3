@@ -25,20 +25,28 @@ option.
 .SH STRUCTURES AND ENUMS
 .TP
 .BR cstring
-typedef struct cstring {
+struct cstring {
     char   *str;      /* contents of string */
     size_t  len;      /* string length */
     size_t  capacity; /* string capacity */
 .br
 };
 .TP
-.BR cstring_flags
-enum cstring_flags {
-    CSTRING_ASCENDING,  /* sort in ascending order */
-    CSTRING_DESCENDING, /* sort in descending order */
-    CSTRING_CALLBACK    /* use your own sort function */
+.BR cstring_sort_flags
+enum cstring_sort_flags {
+    CSTRING_SORT_ASCENDING  = 1 << 0, /* sort in ascending order */
+    CSTRING_SORT_DESCENDING = 1 << 1, /* sort in descending order */
+    CSTRING_SORT_CALLBACK   = 1 << 2, /* use your own sort function */
+    CSTRING_SORT_REST       = 1 << 3  /* sort the rest of the array */
 .br
 };
+.SH TYPEDEFS
+.TP
+.BR typedef\ struct\ cstring\ cstring;
+Short typedef for the cstring structure.
+.TP
+.BR typedef\ int\ (*cstring_sort_callback)(const\ void\ *,\ const\ void\ *);
+Used in sort functions.
 .SH FUNCTIONS
 .TP
 .BR cstring\ cstring_create(const\ char\ *s)
@@ -91,19 +99,29 @@ Extract a substring from current string.
 .BR void\ cstring_swap(cstring\ *lhs,\ cstring\ *rhs)
 Swap contents of two strings.
 .TP
-.BR void\ cstring_sort(cstring\ **cs,\ size_t\ len,\ enum\ cstring_flags\ flags,\ int\ (*callback)(const\ void\ *lhs,\ const\ void\ *rhs))
+.BR void\ cstring_sort(cstring\ **cs,\ size_t\ len,\ enum\ cstring_sort_flags\ flags,\ cstring_sort_callback\ callback)
 Sort an array of cstrings. If you want to use the builtin comparison pass
 .I NULL
 in the last argument. In case you want to use your own callback use the
-.I CSTRING_CALLBACK
+.I CSTRING_SORT_CALLBACK
 flag and pass your own callback function in the last argument.
 .TP
-.BR void\ cstring_sort_chars(cstring\ *cs,\ enum\ cstring_flags\ flags,\ int\ (*callback)(const\ void\ *lhs,\ const\ void\ *rhs))
+.BR void\ cstring_sort_partial(cstring\ **cs,\ size_t\ pos,\ size_t\ len,\ enum\ cstring_sort_flags\ flags,\ cstring_sort_callback\ callback)
+Like
+.B cstring_sort
+but for specified part of an array.
+.TP
+.BR void\ cstring_sort_chars(cstring\ *cs,\ enum\ cstring_sort_flags\ flags,\ cstring_sort_callback\ callback)
 Sort a cstring's contents. If you want to use the builtin comparison pass
 .I NULL
 in the last argument. In case you want to use your own callback use the
-.I CSTRING_CALLBACK
+.I CSTRING_SORT_CALLBACK
 flag and pass your own callback function in the last argument.
+.TP
+.BR void\ cstring_sort_chars_partial(cstring\ *cs,\ size_t\ pos,\ size_t\ len,\ enum\ cstring_sort_flags\ flags,\ cstring_sort_callback\ callback)
+Like
+.B cstring_sort_chars
+but for specified part of string.
 .TP
 .BR void\ cstring_shrink_to_fit(cstring\ *cs)
 Reduce string's capacity to its size.
@@ -155,7 +173,7 @@ Check to see if string ends with
 .I c
 .TP
 .BR void\ *cstring_data(const\ cstring\ *cs)
-Get raw bytes of string's content.
+Get string's content in raw bytes.
 .TP
 .BR char\ *cstring_copy(const\ char\ *s)
 Make a copy of a given
@@ -173,12 +191,36 @@ Read a line from a
 .I FILE
 stream. Similar behavior to
 .I stdio's\ getline
+.TP
+.BR int\ cstring_equal(const\ cstring\ *lhs,\ const\ cstring\ *rhs)
+Check if lhs == rhs
+.TP
+.BR int\ cstring_greater(const\ cstring\ *lhs,\ const\ cstring\ *rhs)
+Check if lhs > rhs
+.TP
+.BR int\ cstring_greater_or_equal(const\ cstring\ *lhs,\ const\ cstring\ *rhs)
+Check if lhs >= rhs
+.TP
+.BR int\ cstring_less(const\ cstring\ *lhs,\ const\ cstring\ *rhs)
+Check if lhs < rhs
+.TP
+.BR int\ cstring_less_or_equal(const\ cstring\ *lhs,\ const\ cstring\ *rhs)
+Check if lhs <= rhs
 .SH MACROS
 .TP
 .BR CSTRING_OUT_OF_BOUNDS(cs,\ pos)
 Check if
 .I pos
 is out of bounds.
+.TP
+.BR CSTRING_ARR_LEN(arr)
+Determine an array's length. The macro must be called in the same function
+the array is declared.
+.TP
+.BR CSTRING_FLAG_CHECK(flag,\ bit)
+Check if a flag is on. This macro is used for checking
+.B cstring_sort_flags
+in the implementation, but it can be used everywhere.
 .TP
 .BR CSTRING_MALLOC(ptr,\ size)
 Allocate memory with error cheking.
@@ -194,17 +236,22 @@ Print all the contents of a
 struct. The argument has to be a pointer.
 .TP
 .BR CSTRING_DBG_LOG_CSTR_INFO_NPTR(cs)
-Print all the contents of a
-.I cstring
-struct. The argument has to be a non-pointer.
+Like
+.B CSTRING_DBG_LOG_CSTR_INFO
+but the argument has to be a non-pointer.
 .TP
-.BR CSTRING_DBG_LOG_STR_INFO(s, len)
+.BR CSTRING_DBG_LOG_STR_INFO(s,\ len)
 Print contents of a normal string.
 .SH CONSTANTS
 .TP
 .BR CSTRING_NPOS
 This constant signifies that a pattern hasn't been found inside
-the string. It's value is -1.
+the string. Its value is -1.
+.TP
+.BR CSTRING_INIT_EMPTY
+Used with
+.B cstring_create
+in case the string is to be initliazed as empty.
 .SH USAGE
 You must
 .B always
@@ -218,7 +265,7 @@ and stop using it respectively, in order to not cause any memory
 leaks.
 .P
 The recommended way of initializing an empty string is by doing
-.I cstring foo = cstring_create("")
+.I cstring foo = cstring_create(CSTRING_INIT_EMPTY)
 .P
 If a function requires a
 .I char *
