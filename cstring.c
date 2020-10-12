@@ -2,38 +2,31 @@
 
 #define CSTRING_EXCEEDS_CAPACITY(len, cap)  ((len) >= (cap))
 
-#define CSTRING_FIND_OCCURENCE(cs, s, func) do {                          \
-    char *_found;                                                         \
-    if ((_found = func(cs->str, (s))) != NULL)                            \
-        return (_found - cs->str);                                        \
+#define CSTRING_FIND_OCCURENCE(cs, s, func) do {                            \
+    char *_found;                                                           \
+    if ((_found = func(cs->str, (s))) != NULL)                              \
+        return (_found - cs->str);                                          \
 } while (0)
 
 #ifdef CSTRING_DBG
-#define CSTRING_FREE(cs) do {                                             \
-    CSTRING_DBG_LOG("Before CSTRING_FREE: %s\n", cs->str);                \
-    if (!cstring_empty(cs))                                               \
-        free(cs->str);                                                    \
+#define CSTRING_FREE(cs) do {                                               \
+    CSTRING_DBG_LOG("Before CSTRING_FREE: %s\n", cs->str);                  \
+    if (!cstring_empty(cs))                                                 \
+        free(cs->str);                                                      \
 } while (0)
-
-/* Might move above erase functions */
-#define CSTRING_EXPECTED_ERASE_STR(cs, pos, len) do {                     \
-    CSTRING_DBG_LOG("%s", "CSTRING_EXPECTED_ERASE_STR: ");                \
-    size_t _i;                                                            \
-    for (_i = 0; _i < (pos); _i++)                                        \
-        printf("%c", cs->str[_i]);                                        \
-    for (_i = (pos) + (len); _i < cs->len; _i++)                          \
-        printf("%c", cs->str[_i]);                                        \
-    printf("\n");                                                         \
-} while (0)
-
-#define CSTRING_EXPECTED_ERASE_LEN(cs, len)                               \
-    CSTRING_DBG_LOG("CSTRING_EXPECTED_ERASE_LEN: %ld\n", cs->len - len)
-#else
-#define CSTRING_FREE(cs) do {                                             \
-    if (!cstring_empty(cs))                                               \
-        free(cs->str);                                                    \
+#else /* !CSTRING_DBG */
+#define CSTRING_FREE(cs) do {                                               \
+    if (!cstring_empty(cs))                                                 \
+        free(cs->str);                                                      \
 } while (0)
 #endif /* CSTRING_DBG */
+
+/* statics */
+static int cstring_is_one_of(char, const char *);
+static inline int cstring_cmp_greater(const void *, const void *);
+static inline int cstring_cmp_less(const void *, const void *);
+static inline int cstring_cmp_char_greater(const void *, const void *);
+static inline int cstring_cmp_char_less(const void *, const void *);
 
 static int
 cstring_is_one_of(char c, const char *s)
@@ -68,6 +61,7 @@ cstring_cmp_char_less(const void *lhs, const void *rhs)
     return (*(char *)lhs < *(char *)rhs);
 }
 
+/* externs */
 cstring
 cstring_create(const char *s)
 {
@@ -129,6 +123,21 @@ cstring_insert(cstring *cs, const char *s, size_t i)
     }
 }
 
+#ifdef CSTRING_DBG
+#define CSTRING_DBG_EXPECTED_ERASE_STR(cs, pos, len) do {                   \
+    CSTRING_DBG_LOG("%s", "CSTRING_DBG_EXPECTED_ERASE_STR: ");              \
+    size_t _i;                                                              \
+    for (_i = 0; _i < (pos); _i++)                                          \
+        printf("%c", cs->str[_i]);                                          \
+    for (_i = (pos) + (len); _i < cs->len; _i++)                            \
+        printf("%c", cs->str[_i]);                                          \
+    printf("\n");                                                           \
+} while (0)
+
+#define CSTRING_DBG_EXPECTED_ERASE_LEN(cs, len)                             \
+    CSTRING_DBG_LOG("CSTRING_DBG_EXPECTED_ERASE_LEN: %ld\n", cs->len - len)
+#endif /* CSTRING_DBG */
+
 void
 cstring_erase(cstring *cs, size_t pos, size_t len)
 {
@@ -138,8 +147,8 @@ cstring_erase(cstring *cs, size_t pos, size_t len)
     {
 #ifdef CSTRING_DBG
         CSTRING_DBG_LOG("STR: %s | INDEX: %ld | LEN: %ld\n", cs->str, pos, len);
-        CSTRING_EXPECTED_ERASE_STR(cs, pos, len);
-        CSTRING_EXPECTED_ERASE_LEN(cs, len);
+        CSTRING_DBG_EXPECTED_ERASE_STR(cs, pos, len);
+        CSTRING_DBG_EXPECTED_ERASE_LEN(cs, len);
 #endif /* CSTRING_DBG */
         size_t newlen = cs->len - len;
         char *tmp;
@@ -181,6 +190,11 @@ cstring_trim(cstring *cs, const char *s)
     for (; i != CSTRING_NPOS; i = cstring_find_first_of(cs, s))
         cstring_erase(cs, i, 1);
 }
+
+#ifdef CSTRING_DBG
+#undef CSTRING_DBG_EXPECTED_ERASE_STR
+#undef CSTRING_DBG_EXPECTED_ERASE_LEN
+#endif /* CSTRING_DBG */
 
 void
 cstring_push_back(cstring *cs, char c)
@@ -308,7 +322,8 @@ cstring_rfind(const cstring *cs, const char *s)
                 break;
             }
         }
-        if (found) idx = i;
+        if (found)
+            idx = i;
     }
     return (idx == -1 ? CSTRING_NPOS : idx);
 }
@@ -377,10 +392,11 @@ cstring_resize(cstring *cs, size_t newcapacity)
             cs->capacity, newcapacity);
 #endif /* CSTRING_DBG */
     char *tmp;
-    CSTRING_MALLOC(tmp, newcapacity);
-    memcpy(tmp, cs->str, cs->len + 1); /* copy \0 too */
+    CSTRING_MALLOC(tmp, newcapacity + 1); /* no +1? */
+    memcpy(tmp, cs->str, cs->len + 1);    /* copy \0 too */
     CSTRING_FREE(cs);
     cs->str = tmp;
+    cs->str[cs->len] = '\0';
     cs->capacity = newcapacity;
 #ifdef CSTRING_DBG
     CSTRING_DBG_LOG_CSTR_INFO(cs);
@@ -393,8 +409,10 @@ cstring_getline(FILE *fd, cstring *cs, char delim)
     char c;
     cstring_clear(cs);
     while ((c = fgetc(fd)) != EOF && c != '\n') {
-        if (c == delim) break;
-        else cstring_push_back(cs, c);
+        if (c == delim)
+            break;
+        else
+            cstring_push_back(cs, c);
     }
     return (c == EOF) ? NULL : cs;
 }

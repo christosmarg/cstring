@@ -53,7 +53,8 @@ main(int argc, char **argv)
     printf("cstring_trim: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
 
     cstring_delete(&s);
-    if (cstring_empty(&s)) puts("cstring_delete: Deleted string.");
+    if (cstring_empty(&s))
+        puts("cstring_delete: Deleted string.");
 
     return 0;
 }
