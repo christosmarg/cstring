@@ -90,8 +90,12 @@ Remove the last character in the string.
 .BR void\ cstring_replace_char(cstring\ *cs,\ size_t\ i,\ char\ c)
 Replace character at a specific index.
 .TP
-.BR void\ cstring_replace_str(cstring\ *cs,\ const\ char\ *s,\ size_t\ pos,\ size_t\ len)
+.BR void\ cstring_replace_str(cstring\ *cs,\ const\ char\ *s,\ size_t\ pos,\ size_t\ olen)
 Replace portion of the string.
+.I olen
+is the length of the old string. An example use could be:
+.br
+.B cstring_replace_str(&string, new_word, cstring_find(&s, old_word), old_word_len)
 .TP
 .BR cstring\ cstring_substr(cstring\ *cs,\ size_t\ pos,\ size_t\ len)
 Extract a substring from current string.
@@ -99,14 +103,15 @@ Extract a substring from current string.
 .BR void\ cstring_swap(cstring\ *lhs,\ cstring\ *rhs)
 Swap contents of two strings.
 .TP
-.BR void\ cstring_sort(cstring\ **cs,\ size_t\ len,\ enum\ cstring_sort_flags\ flags,\ cstring_sort_callback\ callback)
+.BR void\ cstring_sort(cstring\ *cs,\ size_t\ len,\ enum\ cstring_sort_flags\ flags,\ cstring_sort_callback\ callback)
 Sort an array of cstrings. If you want to use the builtin comparison pass
 .I NULL
 in the last argument. In case you want to use your own callback use the
 .I CSTRING_SORT_CALLBACK
 flag and pass your own callback function in the last argument.
+You can also combine flags using the bitwise OR operator.
 .TP
-.BR void\ cstring_sort_partial(cstring\ **cs,\ size_t\ pos,\ size_t\ len,\ enum\ cstring_sort_flags\ flags,\ cstring_sort_callback\ callback)
+.BR void\ cstring_sort_partial(cstring\ *cs,\ size_t\ pos,\ size_t\ len,\ enum\ cstring_sort_flags\ flags,\ cstring_sort_callback\ callback)
 Like
 .B cstring_sort
 but for specified part of an array.
@@ -117,6 +122,7 @@ Sort a cstring's contents. If you want to use the builtin comparison pass
 in the last argument. In case you want to use your own callback use the
 .I CSTRING_SORT_CALLBACK
 flag and pass your own callback function in the last argument.
+You can also combine flags using the bitwise OR operator.
 .TP
 .BR void\ cstring_sort_chars_partial(cstring\ *cs,\ size_t\ pos,\ size_t\ len,\ enum\ cstring_sort_flags\ flags,\ cstring_sort_callback\ callback)
 Like

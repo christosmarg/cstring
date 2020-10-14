@@ -15,6 +15,7 @@ AR = ar
 ARFLAGS = rs
 CC = gcc
 CPPFLAGS += -Iinclude -DCSTRING_DBG -DVERSION=\"${VERSION}\"
+#CPPFLAGS += -Iinclude -DVERSION=\"${VERSION}\"
 CFLAGS += -Wall -std=c99 -pedantic -O3
 LDFLAGS += -Llib
 #LDLIBS += 

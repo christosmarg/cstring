@@ -68,7 +68,7 @@ extern void       cstring_replace_char(cstring *, size_t, char);
 extern void       cstring_replace_str(cstring *, const char *, size_t, size_t);
 extern cstring    cstring_substr(const cstring *, size_t, size_t);
 extern void       cstring_swap(cstring *, cstring *);
-extern void       cstring_sort_partial(cstring **, size_t, size_t,
+extern void       cstring_sort_partial(cstring *, size_t, size_t,
                                        enum cstring_sort_flags,
                                        cstring_sort_callback);
 extern void       cstring_sort_chars_partial(cstring *cs, size_t, size_t,
@@ -89,7 +89,7 @@ extern cstring   *cstring_getline(FILE *, cstring *, char);
 /* static inlines */
 static inline void    cstring_prepend(cstring *, const char *);
 static inline void    cstring_append(cstring *, const char *);
-static inline void    cstring_sort(cstring **, size_t, enum cstring_sort_flags,
+static inline void    cstring_sort(cstring *, size_t, enum cstring_sort_flags,
                                    cstring_sort_callback);
 static inline void    cstring_sort_chars(cstring *, enum cstring_sort_flags,
                                          cstring_sort_callback);
@@ -121,7 +121,7 @@ cstring_append(cstring *cs, const char *s)
 }
 
 static inline void
-cstring_sort(cstring **cs,
+cstring_sort(cstring *cs,
              size_t len,
              enum cstring_sort_flags flags,
              cstring_sort_callback callback)

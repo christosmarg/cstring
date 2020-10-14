@@ -1,6 +1,7 @@
 # cstring
 
-A simple and lightweight string library for C inspired by C++'s STL `string` class.
+A simple and lightweight string library for C inspired by C++'s STL `string` class,
+but with a lot of additions.
 
 ## Building
 
@@ -9,7 +10,6 @@ the library file in `/usr/local/lib`. In order to install it do the following
 
 ```shell
 $ cd /path/to/cstring
-$ make
 $ sudo make install
 $ make clean
 ```
@@ -22,12 +22,11 @@ $ sudo make uninstall
 ```
 
 In order to link `cstring` to your project use the `-lcstring` flag during compilation.  
-In case you want to run your project in debug mode, compile every file using `cstring` with the
-`-DCSTRING_DBG` option.
+In case you want to run your project in debug mode, compile it using the `-DCSTRING_DBG` option.
 
 ## Usage
 
-When using this library, you must to **always** call the `cstring_create` and `cstring_delete` 
+When using this library, you must **always** call the `cstring_create` and `cstring_delete` 
 functions whenever you want to make a new instance of `cstring` and stop using it respectively,
 in order not to cause any memory leaks, as there's no *constructor* and *destructor* to do it for you.  
 
@@ -102,17 +101,18 @@ The following macros can only be used in debug mode
 
 ## Example
 
-See `test.c` for more.
+See the test programs in `tests` for more.
 
 ```c
 #include <stdio.h>
 #include <cstring.h>
 
+/* outputs "Foobar" to the screen */
 int
 main(int argc, char **argv)
 {
     cstring s = cstring_create("Foo");
-    cstring_append(&s, "Bar.");
+    cstring_append(&s, "bar.");
     printf("%s\n", s.str);
     cstring_delete(&s);
 

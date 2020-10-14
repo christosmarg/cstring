@@ -223,15 +223,13 @@ cstring_replace_char(cstring *cs, size_t i, char c)
 }
 
 void
-cstring_replace_str(cstring *cs, const char *s, size_t pos, size_t len)
+cstring_replace_str(cstring *cs, const char *s, size_t pos, size_t olen)
 {
     if (!CSTRING_OUT_OF_BOUNDS(cs, pos)
-    &&  !CSTRING_OUT_OF_BOUNDS(cs, len)
-    &&  !CSTRING_OUT_OF_BOUNDS(cs, pos + len))
+    &&  !CSTRING_OUT_OF_BOUNDS(cs, olen))
     {
-        int i = pos;
-        for (; i < len && *s; s++, i++)
-            cs->str[i] = *s;
+        cstring_erase(cs, pos, olen);
+        cstring_insert(cs, s, pos);
     }
 }
 
@@ -256,23 +254,24 @@ cstring_swap(cstring *lhs, cstring *rhs)
     *rhs = tmp;
 }
 
+// FIX
 void
-cstring_sort_partial(cstring **cs,
+cstring_sort_partial(cstring *cs,
                      size_t pos,
                      size_t len,
                      enum cstring_sort_flags flags,
                      cstring_sort_callback callback)
 {
-    if (CSTRING_FLAG_CHECK(flags, CSTRING_SORT_REST)
-    ||  pos + len > len) /* maybe chanage out of bounds macro */
+    /* maybe chanage out of bounds macro */
+    if (CSTRING_FLAG_CHECK(flags, CSTRING_SORT_REST) ||  pos + len > len)
         len -= pos;
 
     if (CSTRING_FLAG_CHECK(flags, CSTRING_SORT_ASCENDING))
-        qsort(cs + pos, len, sizeof(cstring *), cstring_cmp_greater);
+        qsort(cs + pos, len, sizeof(cstring), cstring_cmp_greater);
     else if (CSTRING_FLAG_CHECK(flags, CSTRING_SORT_DESCENDING))
-        qsort(cs + pos, len, sizeof(cstring *), cstring_cmp_less);
+        qsort(cs + pos, len, sizeof(cstring), cstring_cmp_less);
     else if (CSTRING_FLAG_CHECK(flags, CSTRING_SORT_CALLBACK))
-        qsort(cs + pos, len, sizeof(cstring *), callback);
+        qsort(cs + pos, len, sizeof(cstring), callback);
 }
 
 void
@@ -324,8 +323,8 @@ cstring_rfind(const cstring *cs, const char *s)
     int found;
     size_t idx = -1;
     size_t slen = strlen(s);
-    size_t  i = 0, j;
-    for (; i <= cs->len - slen; i++) {
+    size_t  i, j;
+    for (i = 0; i <= cs->len - slen; i++) {
         found = 1;
         for (j = 0; j < slen; j++) {
             if (cs->str[i + j] != s[j]) {
@@ -400,7 +399,7 @@ cstring_resize(cstring *cs, size_t newcapacity)
 {
 #ifdef CSTRING_DBG
     CSTRING_DBG_LOG("Old capacity: %ld | New capacity: %ld\n",
-            cs->capacity, newcapacity);
+                    cs->capacity, newcapacity);
 #endif /* CSTRING_DBG */
     char *tmp;
     CSTRING_MALLOC(tmp, newcapacity + 1); /* no +1? */
