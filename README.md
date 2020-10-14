@@ -21,7 +21,9 @@ $ cd /path/to/cstring
 $ sudo make uninstall
 ```
 
-In order to link `cstring` to your project use the `-lcstring` flag during compilation.
+In order to link `cstring` to your project use the `-lcstring` flag during compilation.  
+In case you want to run your project in debug mode, compile every file using `cstring` with the
+`-DCSTRING_DBG` option.
 
 ## Usage
 
@@ -86,7 +88,7 @@ The recommended way of initializing an empty string is by doing `cstring foo = c
 * `CSTRING_OUT_OF_BOUNDS`: Check if `pos` is out of bounds.
 * `CSTRING_ARR_LEN`: Determine an array's length. The macro must be called in the same function the array is declared.
 * `CSTRING_FLAG_CHECK`: Check if flag is on.
-* `CSTRING_MALLOC`: Allocate memory with error checking.
+* `CSTRING_MALLOC`: Allocate memory with error checking.  
 The following macros can only be used in debug mode
 * `CSTIRNG_DBG_LOG`: Prints a message in the format of `DEBUG: file:line:func(): msg`.
 * `CSTRING_DBG_LOG_CSTR_INFO`: Prints all the contents of a `cstring` struct. The argument *has* to be a pointer.

@@ -2,7 +2,6 @@
 
 // Compilation: gcc test.c -lcstring
 
-
 int
 main(int argc, char **argv)
 {
