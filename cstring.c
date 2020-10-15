@@ -124,6 +124,7 @@ cstring_insert(cstring *cs, const char *s, size_t i)
 }
 
 #ifdef CSTRING_DBG
+// FIX IT
 #define CSTRING_DBG_EXPECTED_ERASE_STR(cs, pos, len) do {                   \
     CSTRING_DBG_LOG("%s", "CSTRING_DBG_EXPECTED_ERASE_STR: ");              \
     size_t _i;                                                              \
@@ -142,8 +143,8 @@ void
 cstring_erase(cstring *cs, size_t pos, size_t len)
 {
     if (!cstring_empty(cs)
-    &&  !CSTRING_OUT_OF_BOUNDS(cs, pos)
-    &&  !CSTRING_OUT_OF_BOUNDS(cs, len))
+    && (!CSTRING_OUT_OF_BOUNDS(cs, pos)
+    ||  !CSTRING_OUT_OF_BOUNDS(cs, len)))
     {
 #ifdef CSTRING_DBG
         CSTRING_DBG_LOG("STR: %s | INDEX: %ld | LEN: %ld\n", cs->str, pos, len);
@@ -154,7 +155,7 @@ cstring_erase(cstring *cs, size_t pos, size_t len)
         char *tmp;
         CSTRING_MALLOC(tmp, newlen + 1);
         memcpy(tmp, cs->str, pos);
-        memcpy(tmp + pos, cs->str + pos + len, cs->len - len + pos);
+        memcpy(tmp + pos, cs->str + pos + len, cs->len - pos - len);
         CSTRING_FREE(cs); /* Useless check but keep it for consistency */
         cs->len = newlen;
         cs->str = tmp;
@@ -254,7 +255,6 @@ cstring_swap(cstring *lhs, cstring *rhs)
     *rhs = tmp;
 }
 
-// FIX
 void
 cstring_sort_partial(cstring *cs,
                      size_t pos,

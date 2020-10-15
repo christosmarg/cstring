@@ -11,7 +11,7 @@ extern "C" {
 
 #define CSTRING_NPOS -1
 #define CSTRING_INIT_EMPTY ""
-#define CSTRING_OUT_OF_BOUNDS(cs, pos) ((pos) > cs->len)
+#define CSTRING_OUT_OF_BOUNDS(cs, val) ((val) > cs->len)
 #define CSTRING_ARR_LEN(arr)           ((size_t)sizeof((arr)) / sizeof((arr)[0]))
 #define CSTRING_FLAG_CHECK(flag, bit)  (((flag) & (int)(bit)) == (int)(bit))
 

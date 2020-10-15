@@ -1,6 +1,6 @@
 #include "cstring.h"
 
-// Compilation: gcc test.c -lcstring
+// Compilation: gcc test_basic.c -lcstring
 
 int
 main(int argc, char **argv)
@@ -11,7 +11,6 @@ main(int argc, char **argv)
     cstring_sort_chars(&s, CSTRING_SORT_ASCENDING, NULL);
     printf("cstring_sort_chars: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
 
-    // BUG
     cstring_assign(&s, "New string");
     printf("cstring_assign: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
 
@@ -44,7 +43,6 @@ main(int argc, char **argv)
     cstring_replace_str(&s, "hell", 0, strlen("hell"));
     printf("cstring_replace_str: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
 
-    // BUGS
     cstring_erase(&s, 1, 4);
     printf("cstring_erase: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
 

@@ -84,7 +84,7 @@ The recommended way of initializing an empty string is by doing `cstring foo = c
 
 ## Macros
 
-* `CSTRING_OUT_OF_BOUNDS`: Check if `pos` is out of bounds.
+* `CSTRING_OUT_OF_BOUNDS`: Check if value is out of bounds.
 * `CSTRING_ARR_LEN`: Determine an array's length. The macro must be called in the same function the array is declared.
 * `CSTRING_FLAG_CHECK`: Check if flag is on.
 * `CSTRING_MALLOC`: Allocate memory with error checking.  
@@ -112,7 +112,7 @@ int
 main(int argc, char **argv)
 {
     cstring s = cstring_create("Foo");
-    cstring_append(&s, "bar.");
+    cstring_append(&s, "bar");
     printf("%s\n", s.str);
     cstring_delete(&s);
 
