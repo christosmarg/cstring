@@ -1,7 +1,7 @@
 # cstring
 
 A simple and lightweight string library for C inspired by C++'s STL `string` class,
-but with a lot of additions.
+but with a many additions.
 
 ## Building
 
@@ -30,7 +30,9 @@ When using this library, you must **always** call the `cstring_create` and `cstr
 functions whenever you want to make a new instance of `cstring` and stop using it respectively,
 in order not to cause any memory leaks, as there's no *constructor* and *destructor* to do it for you.  
 
-The recommended way of initializing an empty string is by doing `cstring foo = cstring_create(CSTRING_INIT_EMPTY)`.
+The recommended way of initializing an empty string is by doing `cstring foo = cstring_create(CSTRING_INIT_EMPTY)`.  
+
+Read the `man` page for more detailed info.
 
 ## Functions
 
@@ -104,7 +106,6 @@ The following macros can only be used in debug mode
 See the test programs in `tests` for more.
 
 ```c
-#include <stdio.h>
 #include <cstring.h>
 
 /* outputs "Foobar" to the screen */

@@ -1,61 +1,61 @@
-#include "cstring.h"
+#include <cstring.h>
 
 // Compilation: gcc test_basic.c -lcstring
 
 int
 main(int argc, char **argv)
 {
-    cstring s = cstring_create("Hello world");
-    printf("cstring_create: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
+        cstring s = cstring_create("Hello world");
+        printf("cstring_create: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
 
-    cstring_sort_chars(&s, CSTRING_SORT_ASCENDING, NULL);
-    printf("cstring_sort_chars: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
+        cstring_sort_chars(&s, CSTRING_SORT_ASCENDING, NULL);
+        printf("cstring_sort_chars: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
 
-    cstring_assign(&s, "New string");
-    printf("cstring_assign: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
+        cstring_assign(&s, "New string");
+        printf("cstring_assign: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
 
-    cstring_append(&s, "Appended text");
-    printf("cstring_append: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
+        cstring_append(&s, "Appended text");
+        printf("cstring_append: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
 
-    cstring_prepend(&s, "OK");
-    printf("cstring_prepend: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
+        cstring_prepend(&s, "OK");
+        printf("cstring_prepend: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
 
-    cstring_push_back(&s, 'c');
-    printf("cstring_push_back: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
+        cstring_push_back(&s, 'c');
+        printf("cstring_push_back: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
 
-    cstring_insert(&s, "Inserted text", 4);
-    printf("cstring_insert: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
-    
-    cstring_pop_back(&s);
-    printf("cstring_pop_back: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
+        cstring_insert(&s, "Inserted text", 4);
+        printf("cstring_insert: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
+        
+        cstring_pop_back(&s);
+        printf("cstring_pop_back: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
 
-    cstring_clear(&s);
-    printf("cstring_clear: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
+        cstring_clear(&s);
+        printf("cstring_clear: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
 
-    cstring_assign(&s, "CSTRING");
-    printf("cstring_assign: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
-    printf("cstring_front: %c\n", cstring_front(&s));
-    printf("cstring_back: %c\n", cstring_back(&s));
+        cstring_assign(&s, "CSTRING");
+        printf("cstring_assign: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
+        printf("cstring_front: %c\n", cstring_front(&s));
+        printf("cstring_back: %c\n", cstring_back(&s));
 
-    cstring_replace_char(&s, 3, 'x');
-    printf("cstring_replace_char: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
+        cstring_replace_char(&s, 3, 'x');
+        printf("cstring_replace_char: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
 
-    cstring_replace_str(&s, "hell", 0, strlen("hell"));
-    printf("cstring_replace_str: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
+        cstring_replace_str(&s, "hell", 0, strlen("hell"));
+        printf("cstring_replace_str: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
 
-    cstring_erase(&s, 1, 4);
-    printf("cstring_erase: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
+        cstring_erase(&s, 1, 4);
+        printf("cstring_erase: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
 
-    cstring_assign(&s, "hello aaaa hello abbb helo hello");
-    cstring_erase_all_matching(&s, "hello");
-    printf("cstring_erase_all_matching: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
+        cstring_assign(&s, "hello aaaa hello abbb helo hello");
+        cstring_erase_all_matching(&s, "hello");
+        printf("cstring_erase_all_matching: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
 
-    cstring_trim(&s, " ");
-    printf("cstring_trim: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
+        cstring_trim(&s, " ");
+        printf("cstring_trim: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);
 
-    cstring_delete(&s);
-    if (cstring_empty(&s))
-        puts("cstring_delete: Deleted string.");
+        cstring_delete(&s);
+        if (cstring_empty(&s))
+                puts("cstring_delete: Deleted string.");
 
-    return 0;
+        return 0;
 }

@@ -1,3 +1,5 @@
+/* See LICENSE file for copyright and license details. */
+
 #ifndef CSTRING_H
 #define CSTRING_H
 
@@ -15,40 +17,40 @@ extern "C" {
 #define CSTRING_ARR_LEN(arr)           ((size_t)sizeof((arr)) / sizeof((arr)[0]))
 #define CSTRING_FLAG_CHECK(flag, bit)  (((flag) & (int)(bit)) == (int)(bit))
 
-#define CSTRING_MALLOC(ptr, size) do {                               \
-    ptr = (char *)malloc((size));                                    \
-    if (ptr == NULL)                                                 \
-        fputs("CSTRING_MALLOC(): cannot allocate memory\n", stderr); \
+#define CSTRING_MALLOC(ptr, size) do {                                       \
+        ptr = (char *)malloc((size));                                        \
+        if (ptr == NULL)                                                     \
+                fputs("CSTRING_MALLOC(): cannot allocate memory\n", stderr); \
 } while (0)
 
 #ifdef CSTRING_DBG
-#define CSTRING_DBG_LOG(fmt, ...)                                    \
-    fprintf(stderr, "DEBUG: %s:%d:%s(): " fmt,                       \
-            __FILE__, __LINE__, __func__, __VA_ARGS__)
+#define CSTRING_DBG_LOG(fmt, ...)                                            \
+        fprintf(stderr, "DEBUG: %s:%d:%s(): " fmt,                           \
+                __FILE__, __LINE__, __func__, __VA_ARGS__)
 
-#define CSTRING_DBG_LOG_CSTR_INFO(cs)                                \
-    CSTRING_DBG_LOG("STR: %s | LEN: %ld | CAP: %ld\n",               \
-            cs->str, cs->len, cs->capacity)
+#define CSTRING_DBG_LOG_CSTR_INFO(cs)                                        \
+        CSTRING_DBG_LOG("STR: %s | LEN: %ld | CAP: %ld\n",                   \
+                cs->str, cs->len, cs->capacity)
 
-#define CSTRING_DBG_LOG_CSTR_INFO_NPTR(cs)                           \
-    CSTRING_DBG_LOG("STR: %s | LEN: %ld | CAP: %ld\n",               \
-            cs.str, cs.len, cs.capacity)
+#define CSTRING_DBG_LOG_CSTR_INFO_NPTR(cs)                                   \
+        CSTRING_DBG_LOG("STR: %s | LEN: %ld | CAP: %ld\n",                   \
+                cs.str, cs.len, cs.capacity)
 
-#define CSTRING_DBG_LOG_STR_INFO(s, len)                             \
-    CSTRING_DBG_LOG("S: %s | LEN: %ld\n", (s), (len))
+#define CSTRING_DBG_LOG_STR_INFO(s, len)                                     \
+        CSTRING_DBG_LOG("S: %s | LEN: %ld\n", (s), (len))
 #endif /* CSTRING_DBG */
 
 struct cstring {
-    char     *str;
-    size_t    len;
-    size_t    capacity;
+        char     *str;
+        size_t    len;
+        size_t    capacity;
 };
 
 enum cstring_sort_flags {
-    CSTRING_SORT_ASCENDING  = 1 << 0,
-    CSTRING_SORT_DESCENDING = 1 << 1,
-    CSTRING_SORT_CALLBACK   = 1 << 2,
-    CSTRING_SORT_REST       = 1 << 3
+        CSTRING_SORT_ASCENDING  = 1 << 0,
+        CSTRING_SORT_DESCENDING = 1 << 1,
+        CSTRING_SORT_CALLBACK   = 1 << 2,
+        CSTRING_SORT_REST       = 1 << 3
 };
 
 typedef struct cstring cstring;
@@ -111,13 +113,13 @@ static inline int     cstring_less_or_equal(const cstring *, const cstring *);
 static inline void
 cstring_prepend(cstring *cs, const char *s)
 {
-    cstring_insert(cs, s, 0);
+        cstring_insert(cs, s, 0);
 }
 
 static inline void
 cstring_append(cstring *cs, const char *s)
 {
-    cstring_insert(cs, s, cs->len);
+        cstring_insert(cs, s, cs->len);
 }
 
 static inline void
@@ -126,7 +128,7 @@ cstring_sort(cstring *cs,
              enum cstring_sort_flags flags,
              cstring_sort_callback callback)
 {
-    cstring_sort_partial(cs, 0, len, flags, callback);
+        cstring_sort_partial(cs, 0, len, flags, callback);
 }
 
 static inline void
@@ -134,91 +136,91 @@ cstring_sort_chars(cstring *cs,
                    enum cstring_sort_flags flags,
                    cstring_sort_callback callback)
 {
-    cstring_sort_chars_partial(cs, 0, cs->len, flags, callback);
+        cstring_sort_chars_partial(cs, 0, cs->len, flags, callback);
 }
 
 static inline void
 cstring_shrink_to_fit(cstring *cs)
 {
-    cstring_resize(cs, cs->len);
+        cstring_resize(cs, cs->len);
 }
 
 static inline int
 cstring_empty(const cstring *cs)
 {
-    return (cs->str == NULL && cs->len == 0);
+        return (cs->str == NULL && cs->len == 0);
 }
 
 static inline char
 cstring_front(const cstring *cs)
 {
-    return cs->str[0];
+        return cs->str[0];
 }
 
 static inline char
 cstring_back(const cstring *cs)
 {
-    return (!cstring_empty(cs) ? cs->str[cs->len - 1] : cs->str[0]);
+        return (!cstring_empty(cs) ? cs->str[cs->len - 1] : cs->str[0]);
 }
 
 static inline int
 cstring_starts_with_str(const cstring *cs, const char *s)
 {
-    return (cstring_find(cs, s) == 0);
+        return (cstring_find(cs, s) == 0);
 }
 
 static inline int
 cstring_ends_with_str(const cstring *cs, const char *s)
 {
-    return (cstring_find(cs, s) == cs->len - strlen(s));
+        return (cstring_find(cs, s) == cs->len - strlen(s));
 }
 
 static inline int
 cstring_starts_with_char(const cstring *cs, char c)
 {
-    return (cs->str[0] == c);
+        return (cs->str[0] == c);
 }
 
 static inline int
 cstring_ends_with_char(const cstring *cs, char c)
 {
-    return (cs->str[cs->len] = c);
+        return (cs->str[cs->len] = c);
 }
 
 static inline void *
 cstring_data(const cstring *cs)
 {
-    return (void *)cs->str;
+        return (void *)cs->str;
 }
 
 static inline int
 cstring_equal(const cstring *lhs, const cstring *rhs)
 {
-    return (strcmp(lhs->str, rhs->str) == 0);
+        return (strcmp(lhs->str, rhs->str) == 0);
 }
 
 static inline int
 cstring_greater(const cstring *lhs, const cstring *rhs)
 {
-    return (strcmp(lhs->str, rhs->str) > 0);
+        return (strcmp(lhs->str, rhs->str) > 0);
 }
 
 static inline int
 cstring_greater_or_equal(const cstring *lhs, const cstring *rhs)
 {
-    return (strcmp(lhs->str, rhs->str) >= 0);
+        return (strcmp(lhs->str, rhs->str) >= 0);
 }
 
 static inline int
 cstring_less(const cstring *lhs, const cstring *rhs)
 {
-    return (strcmp(lhs->str, rhs->str) < 0);
+        return (strcmp(lhs->str, rhs->str) < 0);
 }
 
 static inline int
 cstring_less_or_equal(const cstring *lhs, const cstring *rhs)
 {
-    return (strcmp(lhs->str, rhs->str) <= 0);
+        return (strcmp(lhs->str, rhs->str) <= 0);
 }
 
 #ifdef __cplusplus
