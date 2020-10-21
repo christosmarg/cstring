@@ -41,9 +41,9 @@ extern "C" {
 #endif /* CSTRING_DBG */
 
 struct cstring {
-        char     *str;
         size_t    len;
         size_t    capacity;
+        char     *str;
 };
 
 enum cstring_sort_flags {

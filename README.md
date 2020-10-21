@@ -6,23 +6,34 @@ but with a many additions.
 ## Building
 
 `cstring` is a static library. The header file is installed in `/usr/local/include` and
-the library file in `/usr/local/lib`. In order to install it do the following
+the library file in `/usr/local/lib`. 
 
+In order to install it do the following
 ```shell
 $ cd /path/to/cstring
-$ sudo make install
-$ make clean
+$ sudo make install clean
+```
+
+You can also run a few tests
+```shell
+$ cd /path/to/cstring/tests
+$ make && make run clean
+```
+
+In order to make a distribution do
+```shell
+$ cd /path/to/cstring
+$ make dist
 ```
 
 If you want to uninstall the library do the following
-
 ```shell
 $ cd /path/to/cstring
 $ sudo make uninstall
 ```
 
-In order to link `cstring` to your project use the `-lcstring` flag during compilation.  
-In case you want to run your project in debug mode, compile it using the `-DCSTRING_DBG` option.
+A file using `cstring` has to be linked using the `-lcstring` linker flag.  
+In case you want to run your project in debug mode, compile the library using the `-DCSTRING_DBG` option.
 
 ## Usage
 

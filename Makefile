@@ -1,36 +1,15 @@
 # See LICENSE file for copyright and license details.
+# cstring - a simple and lightweight string library for C
+.POSIX:
+
+include config.mk
 
 LIB = cstring
-VERSION = 0.1
 DIST = ${LIB}-${VERSION}
 MAN3 = ${LIB}.3
-PREFIX = /usr/local
-MAN_DIR = ${PREFIX}/man/man3
-INC_DIR = ${PREFIX}/include
-LIB_DIR = ${PREFIX}/lib
 
-EXT = c
-#SRC = ${wildcard *.${EXT}}
-#OBJ = ${SRC:%.${EXT}=%.o}
 SRC = cstring.c
 OBJ = cstring.o
-
-AR = ar
-ARFLAGS = rs
-CC = gcc
-INCS = -Iinclude
-# Uncomment if you want to compile the library in debug mode
-#CPPFLAGS = -DCSTRING_DBG -DVERSION=\"${VERSION}\"
-CPPFLAGS = -DVERSION=\"${VERSION}\"
-CFLAGS = -Wall -std=c99 -pedantic -O3 ${INCS} ${CPPFLAGS}
-LDFLAGS = -Llib
-
-CP = cp -f
-RM = rm -f
-RM_DIR = rm -rf
-MKDIR = mkdir -p
-TAR = tar -cf
-GZIP = gzip
 
 all: options ${LIB}
 
@@ -43,12 +22,13 @@ options:
 ${LIB}: ${OBJ}
 	${AR} ${ARFLAGS} lib${LIB}.a ${OBJ}
 
-${OBJ}: ${SRC}
+${OBJ}: ${SRC} cstring.h
 	${CC} ${CFLAGS} -c ${SRC} -o $@
 
 dist: clean
 	${MKDIR} ${DIST}
-	${CP} -R tests ${SRC} ${MAN3} LICENSE Makefile README.md ${DIST}
+	${CP} -R tests/ config.mk ${MAN3} ${SRC} cstring.h LICENSE Makefile \
+		README.md ${DIST}
 	${TAR} ${DIST}.tar ${DIST}
 	${GZIP} ${DIST}.tar
 	${RM_DIR} ${DIST}

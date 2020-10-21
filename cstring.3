@@ -27,9 +27,9 @@ option.
 .Bl -tag -width Ds
 .It cstring
 struct cstring {
-        char   *str;      /* contents of string */
         size_t  len;      /* string length */
         size_t  capacity; /* string capacity */
+        char   *str;      /* contents of string */
 .br
 };
 .It cstring_sort_flags

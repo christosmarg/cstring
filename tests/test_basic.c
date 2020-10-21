@@ -3,7 +3,7 @@
 // Compilation: gcc test_basic.c -lcstring
 
 int
-main(int argc, char **argv)
+main(int argc, char *argv[])
 {
         cstring s = cstring_create("Hello world");
         printf("cstring_create: %s (Len: %ld, Capacity: %ld)\n", s.str, s.len, s.capacity);

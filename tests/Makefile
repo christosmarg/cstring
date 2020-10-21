@@ -1,3 +1,7 @@
+# See LICENSE file for copyright and license details.
+# cstring tests
+.POSIX:
+
 BINS = test_basic test_insert
 CC = gcc
 CFLAGS = -Wall -std=c99 -pedantic -O3
@@ -12,19 +16,14 @@ options:
 	@echo "CC       = ${CC}"
 
 run:
-	@echo "---------------------------"
-	@echo "---------------------------"
-	@echo "RUNNING: test_basic"
-	@echo "---------------------------"
-	@echo "---------------------------"
-	./test_basic
-	
-	@echo "---------------------------"
-	@echo "---------------------------"
-	@echo "RUNNING: test_insert"
-	@echo "---------------------------"
-	@echo "---------------------------"
-	./test_insert
+	for bin in ${BINS}; do \
+		echo "---------------------------"; \
+		echo "---------------------------"; \
+		echo "RUNNING: $${bin}"; \
+		echo "---------------------------"; \
+		echo "---------------------------"; \
+		./$${bin}; \
+	done
 
 clean:
 	rm -f ${BINS} *.o
