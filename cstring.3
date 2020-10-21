@@ -1,282 +1,283 @@
-.TH cstring 3 cstring\-VERSION
-.SH NAME
-.B cstring
-\- A simple and lightweight string library for C inspired by C++'s
+.Dd cstring\-VERSION
+.Dt cstring 3
+.Sh NAME
+.Nm cstring
+.Nd A simple and lightweight string library for C inspired by C++'s
 STL string class
-.SH SYNOPSIS
+.Sh SYNOPSIS
 #include <cstring.h>
-.SH DESCRIPTION
-.P
+.Sh DESCRIPTION
+.Pp
 The
-.B cstring
+.Nm
 library offers a lightweight and fast way to manage
 strings with a wide range of useful functions.
-.P
+.Pp
 A program using
-.B cstring
+.Nm
 has to be linked using the
-.B \-lcstring
+.Ar \-lcstring
 option.
-.P
+.Pp
 In case you want to run the program in debug mode, compile
 it with the
-.B -DCSTRING_DBG
+.Ar \-DCSTRING_DBG
 option.
-.SH STRUCTURES AND ENUMS
-.TP
-.BR cstring
+.Sh STRUCTURES AND ENUMS
+.Bl -tag -width Ds
+.It cstring
 struct cstring {
-    char   *str;      /* contents of string */
-    size_t  len;      /* string length */
-    size_t  capacity; /* string capacity */
+        char   *str;      /* contents of string */
+        size_t  len;      /* string length */
+        size_t  capacity; /* string capacity */
 .br
 };
-.TP
-.BR cstring_sort_flags
+.It cstring_sort_flags
 enum cstring_sort_flags {
-    CSTRING_SORT_ASCENDING  = 1 << 0, /* sort in ascending order */
-    CSTRING_SORT_DESCENDING = 1 << 1, /* sort in descending order */
-    CSTRING_SORT_CALLBACK   = 1 << 2, /* use your own sort function */
-    CSTRING_SORT_REST       = 1 << 3  /* sort the rest of the array */
+        CSTRING_SORT_ASCENDING  = 1 << 0, /* sort in ascending order */
+        CSTRING_SORT_DESCENDING = 1 << 1, /* sort in descending order */
+        CSTRING_SORT_CALLBACK   = 1 << 2, /* use your own sort function */
+        CSTRING_SORT_REST       = 1 << 3  /* sort the rest of the array */
 .br
 };
-.SH TYPEDEFS
-.TP
-.BR typedef\ struct\ cstring\ cstring;
+.Sh TYPEDEFS
+.Bl -tag -width Ds
+.It typedef\ struct\ cstring\ cstring;
 Short typedef for the cstring structure.
-.TP
-.BR typedef\ int\ (*cstring_sort_callback)(const\ void\ *,\ const\ void\ *);
+.It typedef\ int\ (*cstring_sort_callback)(const void *, const void *);
 Used in sort functions.
-.SH FUNCTIONS
-.TP
-.BR cstring\ cstring_create(const\ char\ *s)
+.Sh FUNCTIONS
+.Bl -tag -width Ds
+.It void Fn cstring_create "const char *s"
 Instanciates and initializes a
-.I cstring
+.Ar cstring
 object.
-.TP
-.BR void\ cstring_delete(cstring\ *cs)
+
+.It void Fn cstring_delete "cstring *cs"
 Deallocate string.
-.TP
-.BR void\ cstring_assign(cstring\ *cs,\ const\ char\ *s)
+
+.It void Fn cstring_assign "cstring *cs" "const char *s"
 Assign a new string to current string.
-.TP
-.BR void\ cstring_insert(cstring\ *cs,\ const\ char\ *s,\ size_t\ i)
+
+.It void Fn cstring_insert "cstring *cs" "const char *s" "size_t i"
 Insert at a specific index.
-.TP
-.BR void\ cstring_append(cstring\ *cs,\ const\ char\ *s)
+
+.It void Fn cstring_append "cstring *cs" "const char *s"
 Append to end of string.
-.TP
-.BR void\ cstring_prepend(cstring\ *cs,\ const\ char\ *s)
+
+.It void Fn cstring_prepend "cstring *cs" "const char *s"
 Prepend to beginning of string.
-.TP
-.BR void\ cstring_erase(cstring\ *cs,\ size_t\ pos,\ size_t\ len)
+
+.It void Fn cstring_erase "cstring *cs" "size_t pos" "size_t len"
 Erase a portion of the string.
-.TP
-.BR void\ cstring_erase_matching(cstring\ *cs,\ const\ char\ *s)
+
+.It void Fn cstring_erase_matching "cstring *cs" "const char *s"
 Erase first match from string.
-.TP
-.BR void\ cstring_erase_all_matching(cstring\ *cs,\ const\ char\ *s)
+
+.It void Fn cstring_erase_all_matching "cstring *cs" "const char *s"
 Erase all matches from string.
-.TP
-.BR void\ cstring_trim(cstring\ *cs,\ const\ char\ *s)
+
+.It void Fn cstring_trim "cstring *cs" "const char *s"
 Trim characters from string.
-.TP
-.BR void\ cstring_push_back(cstring\ *cs,\ char\ c)
+
+.It void Fn cstring_push_back "cstring *cs" "char c"
 Add a character at the end of the string.
-.TP
-.BR void\ cstring_pop_back(cstring\ *cs)
+
+.It void Fn cstring_pop_back "cstring *cs"
 Remove the last character in the string.
-.TP
-.BR void\ cstring_replace_char(cstring\ *cs,\ size_t\ i,\ char\ c)
+
+.It void Fn cstring_replace_char "cstring *cs" "size_t i" "char c"
 Replace character at a specific index.
-.TP
-.BR void\ cstring_replace_str(cstring\ *cs,\ const\ char\ *s,\ size_t\ pos,\ size_t\ olen)
+
+.It void Fn cstring_replace_str "cstring *cs" "const char *s" "size_t pos" "size_t olen"
 Replace portion of the string.
-.I olen
+.Ar olen
 is the length of the old string. An example use could be:
 .br
-.B cstring_replace_str(&string, new_word, cstring_find(&s, old_word), old_word_len)
-.TP
-.BR cstring\ cstring_substr(cstring\ *cs,\ size_t\ pos,\ size_t\ len)
+.Fn cstring_replace_str "&string" "new_word" "cstring_find(&s, old_word)" "old_word_len"
+
+.It cstring Fn cstring_substr "cstring *cs" "size_t pos" "size_t len"
 Extract a substring from current string.
-.TP
-.BR void\ cstring_swap(cstring\ *lhs,\ cstring\ *rhs)
+
+.It void Fn cstring_swap "cstring *lhs" "cstring *rhs"
 Swap contents of two strings.
-.TP
-.BR void\ cstring_sort(cstring\ *cs,\ size_t\ len,\ enum\ cstring_sort_flags\ flags,\ cstring_sort_callback\ callback)
+
+.It void Fn cstring_sort "cstring *cs" "size_t len" "enum cstring_sort_flags flags" "cstring_sort_callback callback"
 Sort an array of cstrings. If you want to use the builtin comparison pass
-.I NULL
+.Ar NULL
 in the last argument. In case you want to use your own callback use the
-.I CSTRING_SORT_CALLBACK
+.Ar CSTRING_SORT_CALLBACK
 flag and pass your own callback function in the last argument.
 You can also combine flags using the bitwise OR operator.
-.TP
-.BR void\ cstring_sort_partial(cstring\ *cs,\ size_t\ pos,\ size_t\ len,\ enum\ cstring_sort_flags\ flags,\ cstring_sort_callback\ callback)
+
+.It void Fn cstring_sort_partial "cstring *cs" "size_t pos" "size_t len" "enum cstring_sort_flags flags" "cstring_sort_callback callback"
 Like
-.B cstring_sort
+.Fn cstring_sort
 but for specified part of an array.
-.TP
-.BR void\ cstring_sort_chars(cstring\ *cs,\ enum\ cstring_sort_flags\ flags,\ cstring_sort_callback\ callback)
+
+.It void Fn cstring_sort_chars "cstring *cs" "enum cstring_sort_flags flags" "cstring_sort_callback callback"
 Sort a cstring's contents. If you want to use the builtin comparison pass
-.I NULL
+.Ar NULL
 in the last argument. In case you want to use your own callback use the
-.I CSTRING_SORT_CALLBACK
+.Ar CSTRING_SORT_CALLBACK
 flag and pass your own callback function in the last argument.
 You can also combine flags using the bitwise OR operator.
-.TP
-.BR void\ cstring_sort_chars_partial(cstring\ *cs,\ size_t\ pos,\ size_t\ len,\ enum\ cstring_sort_flags\ flags,\ cstring_sort_callback\ callback)
+
+.It void Fn cstring_sort_chars_partial "cstring *cs" "size_t pos" "size_t len" "enum cstring_sort_flags flags" "cstring_sort_callback callback"
 Like
-.B cstring_sort_chars
+.Fn cstring_sort_chars
 but for specified part of string.
-.TP
-.BR void\ cstring_shrink_to_fit(cstring\ *cs)
+
+.It void Fn cstring_shrink_to_fit "cstring *cs"
 Reduce string's capacity to its size.
-.TP
-.BR void\ cstring_clear(cstring\ *cs)
+
+.It void Fn cstring_clear "cstring *cs"
 Erase the whole string.
-.TP
-.BR size_t\ cstring_find(const\ cstring\ *cs,\ const\ char\ *s)
+
+.It size_t Fn cstring_find "const cstring *cs" "const char *s"
 Find first occurence of a pattern in string.
-.TP
-.BR size_t\ cstring_rfind(const\ cstring\ *cs,\ const\ char\ *s)
+
+.It size_t Fn cstring_rfind "const cstring *cs" "const char *s"
 Find last occurence of a pattern in string.
-.TP
-.BR size_t\ cstring_find_first_of(const\ cstring\ *cs,\ const\ char\ *s)
+
+.It size_t Fn cstring_find_first_of "const cstring *cs" "const char *s"
 Find first occurence of specified characters in string.
-.TP
-.BR size_t\ cstring_find_first_not_of(const\ cstring\ *cs,\ const\ char\ *s)
+
+.It size_t Fn cstring_find_first_not_of "const cstring *cs" "const char *s"
 Find the first character that does not match any of the specified characters.
-.TP
-.BR size_t\ cstring_find_last_of(const\ cstring\ *cs,\ const\ char\ *s)
+
+.It size_t Fn cstring_find_last_of "const cstring *cs" "const char *s"
 Find last occurence of specified characters in string.
-.TP
-.BR size_t\ cstring_find_last_not_of(const\ cstring\ *cs,\ const\ char\ *s)
+
+.It size_t Fn cstring_find_last_not_of "const cstring *cs" "const char *s"
 Find the last character that does not match any of the specified characters.
-.TP
-.BR char\ cstring_front(const\ cstring\ *cs)
+
+.It char Fn cstring_front "const cstring *cs"
 Returns the first character of the string.
-.TP
-.BR char\ cstring_back(const\ cstring\ *cs)
+
+.It char Fn cstring_back "const cstring *cs"
 Returns the last character of the string.
-.TP
-.BR int\ cstring_empty(const\ cstring\ *cs)
+
+.It int Fn cstring_empty "const cstring *cs"
 Check to see if the string is empty.
-.TP
-.BR int\ cstring_starts_with_str(const\ cstring\ *cs,\ const\ char\ *s)
+
+.It int Fn cstring_starts_with_str "const cstring *cs" "const char *s"
 Check to see if string begins with
-.I s
-.TP
-.BR int\ cstring_ends_with_str(const\ cstring\ *cs,\ const\ char\ *s)
+.Ar s
+
+.It int Fn cstring_ends_with_str "const cstring *cs" "const char *s"
 Check to see if string ends with
-.I s
-.TP
-.BR int\ cstring_starts_with_char(const\ cstring\ *cs,\ char\ c)
+.Ar s
+
+.It int Fn cstring_starts_with_char "const cstring *cs" "char c"
 Check to see if string starts with
-.I c
-.TP
-.BR int\ cstring_ends_with_char(const\ cstring\ *cs,\ char\ c)
+.Ar c
+
+.It int Fn cstring_ends_with_char "const cstring *cs" "char c"
 Check to see if string ends with
-.I c
-.TP
-.BR void\ *cstring_data(const\ cstring\ *cs)
+.Ar c
+
+.It void Fn *cstring_data "const cstring *cs"
 Get string's content in raw bytes.
-.TP
-.BR char\ *cstring_copy(const\ char\ *s)
+
+.It char Fn *cstring_copy "const char *s"
 Make a copy of a given
-.I const\ char\ *
-.TP
-.BR void\ cstring_resize(cstring\ *cs,\ size_t\ newcapacity)
+.Ar const\ char\ *
+
+.It void Fn cstring_resize "cstring *cs" "size_t newcapacity"
 Resize the
-.I str
+.Ar str
 array inside a given
-.I cstring
+.Ar cstring
 struct.
-.TP
-.BR cstring\ *cstring_getline(FILE\ *fd,\ cstring\ *cs,\ char\ delim)
+
+.It cstring Fn *cstring_getline "FILE *fd" "cstring *cs" "char delim"
 Read a line from a
-.I FILE
+.Ar FILE
 stream. Similar behavior to
-.I stdio's\ getline
-.TP
-.BR int\ cstring_equal(const\ cstring\ *lhs,\ const\ cstring\ *rhs)
+.Ar stdio's\ getline
+
+.It int Fn cstring_equal "const cstring *lhs" "const cstring *rhs"
 Check if lhs == rhs
-.TP
-.BR int\ cstring_greater(const\ cstring\ *lhs,\ const\ cstring\ *rhs)
+
+.It int Fn cstring_greater "const cstring *lhs" "const cstring *rhs"
 Check if lhs > rhs
-.TP
-.BR int\ cstring_greater_or_equal(const\ cstring\ *lhs,\ const\ cstring\ *rhs)
+
+.It int Fn cstring_greater_or_equal "const cstring *lhs" "const cstring *rhs"
 Check if lhs >= rhs
-.TP
-.BR int\ cstring_less(const\ cstring\ *lhs,\ const\ cstring\ *rhs)
+
+.It int Fn cstring_less "const cstring *lhs" "const cstring *rhs"
 Check if lhs < rhs
-.TP
-.BR int\ cstring_less_or_equal(const\ cstring\ *lhs,\ const\ cstring\ *rhs)
+
+.It int Fn cstring_less_or_equal "const cstring *lhs" "const cstring *rhs"
 Check if lhs <= rhs
-.SH MACROS
-.TP
-.BR CSTRING_OUT_OF_BOUNDS(cs,\ pos)
+
+.Sh MACROS
+.Bl -tag -width Ds
+.It Fn CSTRING_OUT_OF_BOUNDS "cs" "pos"
 Check if
-.I pos
+.Ar pos
 is out of bounds.
-.TP
-.BR CSTRING_ARR_LEN(arr)
+
+.It Fn CSTRING_ARR_LEN "arr"
 Determine an array's length. The macro must be called in the same function
 the array is declared.
-.TP
-.BR CSTRING_FLAG_CHECK(flag,\ bit)
+
+.It Fn CSTRING_FLAG_CHECK "flag" "bit"
 Check if a flag is on. This macro is used for checking
-.B cstring_sort_flags
+.Ar cstring_sort_flags
 in the implementation, but it can be used everywhere.
-.TP
-.BR CSTRING_MALLOC(ptr,\ size)
+
+.It Fn CSTRING_MALLOC "ptr" "size"
 Allocate memory with error cheking.
-.P
+
+.Pp
 The following macros can only be used in debug mode:
-.TP
-.BR CSTRING_DBG_LOG(fmt,\ ...)
+.It Fn CSTRING_DBG_LOG "fmt" "..."
 Prints a message in the format of "DEBUG: file:line:func(): msg".
-.TP
-.BR CSTRING_DBG_LOG_CSTR_INFO(cs)
+
+.It Fn CSTRING_DBG_LOG_CSTR_INFO "cs"
 Print all the contents of a
-.I cstring
+.Ar cstring
 struct. The argument has to be a pointer.
-.TP
-.BR CSTRING_DBG_LOG_CSTR_INFO_NPTR(cs)
+
+.It Fn CSTRING_DBG_LOG_CSTR_INFO_NPTR "cs"
 Like
-.B CSTRING_DBG_LOG_CSTR_INFO
+.Fn CSTRING_DBG_LOG_CSTR_INFO
 but the argument has to be a non-pointer.
-.TP
-.BR CSTRING_DBG_LOG_STR_INFO(s,\ len)
+.It Fn CSTRING_DBG_LOG_STR_INFO "s" "len"
 Print contents of a normal string.
-.SH CONSTANTS
-.TP
-.BR CSTRING_NPOS
+
+.Sh CONSTANTS
+.Bl -tag -width Ds
+.It CSTRING_NPOS
 This constant signifies that a pattern hasn't been found inside
 the string. Its value is -1.
-.TP
-.BR CSTRING_INIT_EMPTY
+
+.It CSTRING_INIT_EMPTY
 Used with
-.B cstring_create
+.Fn cstring_create
 in case the string is to be initliazed as empty.
-.SH USAGE
+
+.Sh USAGE
 You must
-.B always
+.Ar always
 call the
-.I cstring_create
+.Fn cstring_create
 and
-.I cstring_delete
+.Fn cstring_delete
 functions whenever you want to make a new instance of
-.I cstring
+.Ar cstring
 and stop using it respectively, in order to not cause any memory
 leaks.
-.P
+.Pp
 The recommended way of initializing an empty string is by doing
-.I cstring foo = cstring_create(CSTRING_INIT_EMPTY)
-.P
+.Ar cstring foo = cstring_create(CSTRING_INIT_EMPTY)
+.Pp
 If a function requires a
-.I char *
+.Ar char *
 you can access the
-.I .str
+.Ar .str
 field and pass it to the function.
-.SH AUTHORS
-Christos Margiolis <christos@christosmarg.xyz>
+.Sh AUTHORS
+.An Christos Margiolis Aq Mt christos@christosmarg.xyz
