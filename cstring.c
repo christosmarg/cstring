@@ -397,6 +397,21 @@ cstring_find_last_not_of(const cstring *cs, const char *s)
 
 #undef CSTR_CHECK
 
+int
+cstring_ends_with_str(const cstring *cs, const char *s)
+{
+        /* avoid cstring_substr */
+        cstring sub;
+        size_t slen;
+        int found;
+
+        slen = strlen(s);
+        sub = cstring_substr(cs, cs->len - slen, slen);
+        found = !strcmp(sub.str, s);
+        cstring_delete(&sub);
+        return found;
+}
+
 char *
 cstring_copy(const char *s)
 {

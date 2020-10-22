@@ -18,7 +18,7 @@ extern "C" {
 #define CSTRING_FLAG_CHECK(flag, bit)  (((flag) & (int)(bit)) == (int)(bit))
 
 #define CSTRING_MALLOC(ptr, size) do {                                       \
-        ptr = (char *)malloc((size));                                        \
+        ptr = malloc((size));                                                \
         if (ptr == NULL)                                                     \
                 fputs("CSTRING_MALLOC(): cannot allocate memory\n", stderr); \
 } while (0)
@@ -83,6 +83,7 @@ extern size_t     cstring_find_first_of(const cstring *, const char *);
 extern size_t     cstring_find_first_not_of(const cstring *,const  char *);
 extern size_t     cstring_find_last_of(const cstring *, const char *);
 extern size_t     cstring_find_last_not_of(const cstring *, const char *);
+extern int        cstring_ends_with_str(const cstring *, const char *);
 extern char      *cstring_copy(const char *);
 extern void       cstring_resize(cstring *, size_t);
 extern cstring   *cstring_getline(FILE *, cstring *, char);
@@ -100,7 +101,6 @@ static inline int     cstring_empty(const cstring *);
 static inline char    cstring_front(const cstring *);
 static inline char    cstring_back(const cstring *);
 static inline int     cstring_starts_with_str(const cstring *, const char *);
-static inline int     cstring_ends_with_str(const cstring *, const char *);
 static inline int     cstring_starts_with_char(const cstring *, char);
 static inline int     cstring_ends_with_char(const cstring *, char);
 static inline void   *cstring_data(const cstring *);
@@ -167,12 +167,6 @@ static inline int
 cstring_starts_with_str(const cstring *cs, const char *s)
 {
         return (cstring_find(cs, s) == 0);
-}
-
-static inline int
-cstring_ends_with_str(const cstring *cs, const char *s)
-{
-        return (cstring_find(cs, s) == cs->len - strlen(s));
 }
 
 static inline int
