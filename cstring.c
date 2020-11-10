@@ -1,5 +1,4 @@
 /* See LICENSE file for copyright and license details. */
-
 #include "cstring.h"
 
 #define CSTRING_EXCEEDS_CAPACITY(len, cap)  ((len) >= (cap))
@@ -54,13 +53,13 @@ cstring_cmp_less(const void *lhs, const void *rhs)
 static inline int
 cstring_cmp_char_greater(const void *lhs, const void *rhs)
 {
-        return (*(char *)lhs > *(char *)rhs);
+        return (*(char *)lhs - *(char *)rhs);
 }
 
 static inline int
 cstring_cmp_char_less(const void *lhs, const void *rhs)
 {
-        return (*(char *)lhs < *(char *)rhs);
+        return -(*(char *)lhs - *(char *)rhs);
 }
 
 /* externs */
@@ -107,7 +106,7 @@ cstring_insert(cstring *cs, const char *s, size_t i)
         size_t slen, newlen;
         char *tmp;
 
-        if (!CSTRING_OUT_OF_BOUNDS(cs, i) && s != NULL) {
+        if (!CSTRING_OUT_OF_BOUNDS(cs->len, i) && s != NULL) {
                 slen = strlen(s);
                 newlen = cs->len + slen;
                 CSTRING_MALLOC(tmp, newlen + 1);
@@ -150,8 +149,8 @@ cstring_erase(cstring *cs, size_t pos, size_t len)
         char *tmp;
 
         if (!cstring_empty(cs)
-        && (!CSTRING_OUT_OF_BOUNDS(cs, pos)
-        ||  !CSTRING_OUT_OF_BOUNDS(cs, len))) {
+        && (!CSTRING_OUT_OF_BOUNDS(cs->len, pos)
+        ||  !CSTRING_OUT_OF_BOUNDS(cs->len, len))) {
 #ifdef CSTRING_DBG
                 CSTRING_DBG_LOG("STR: %s | INDEX: %ld | LEN: %ld\n",
                                 cs->str, pos, len);
@@ -229,15 +228,15 @@ cstring_pop_back(cstring *cs)
 void
 cstring_replace_char(cstring *cs, size_t i, char c)
 {
-        if (!CSTRING_OUT_OF_BOUNDS(cs, i))
+        if (!CSTRING_OUT_OF_BOUNDS(cs->len, i))
                 cs->str[i] = c;
 }
 
 void
 cstring_replace_str(cstring *cs, const char *s, size_t pos, size_t olen)
 {
-        if (!CSTRING_OUT_OF_BOUNDS(cs, pos)
-        &&  !CSTRING_OUT_OF_BOUNDS(cs, olen)) {
+        if (!CSTRING_OUT_OF_BOUNDS(cs->len, pos)
+        &&  !CSTRING_OUT_OF_BOUNDS(cs->len, olen)) {
                 cstring_erase(cs, pos, olen);
                 cstring_insert(cs, s, pos);
         }
@@ -246,8 +245,8 @@ cstring_replace_str(cstring *cs, const char *s, size_t pos, size_t olen)
 cstring
 cstring_substr(const cstring *cs, size_t pos, size_t len)
 {
-        if (CSTRING_OUT_OF_BOUNDS(cs, pos)
-        ||  CSTRING_OUT_OF_BOUNDS(cs, len))
+        if (CSTRING_OUT_OF_BOUNDS(cs->len, pos)
+        ||  CSTRING_OUT_OF_BOUNDS(cs->len, len))
                 return cstring_create("");
         cstring substr = cstring_create(&cs->str[pos]);
         substr.len = len;
@@ -265,41 +264,33 @@ cstring_swap(cstring *lhs, cstring *rhs)
 }
 
 void
-cstring_sort_partial(cstring *cs,
-                     size_t pos,
-                     size_t len,
-                     enum cstring_sort_flags flags,
-                     cstring_sort_callback callback)
+cstring_sort_partial(cstring *cs, size_t pos, size_t len, int flags,
+                     cstring_sort_callback cb)
 {
-        /* maybe chanage out of bounds macro */
-        if (CSTRING_FLAG_CHECK(flags, CSTRING_SORT_REST) ||  pos + len > len)
+        if (flags & CSTRING_SORT_REST ||  CSTRING_OUT_OF_BOUNDS(len, pos + len))
                 len -= pos;
 
-        if (CSTRING_FLAG_CHECK(flags, CSTRING_SORT_ASCENDING))
+        if (flags & CSTRING_SORT_ASCENDING)
                 qsort(cs + pos, len, sizeof(cstring), cstring_cmp_greater);
-        else if (CSTRING_FLAG_CHECK(flags, CSTRING_SORT_DESCENDING))
+        else if (flags & CSTRING_SORT_DESCENDING)
                 qsort(cs + pos, len, sizeof(cstring), cstring_cmp_less);
-        else if (CSTRING_FLAG_CHECK(flags, CSTRING_SORT_CALLBACK))
-                qsort(cs + pos, len, sizeof(cstring), callback);
+        else if (flags & CSTRING_SORT_CALLBACK)
+                qsort(cs + pos, len, sizeof(cstring), cb);
 }
 
 void
-cstring_sort_chars_partial(cstring *cs,
-                           size_t pos,
-                           size_t len,
-                           enum cstring_sort_flags flags,
-                           cstring_sort_callback callback)
+cstring_sort_chars_partial(cstring *cs, size_t pos, size_t len, int flags,
+                           cstring_sort_callback cb)
 {
-        if (CSTRING_FLAG_CHECK(flags, CSTRING_SORT_REST)
-        ||  CSTRING_OUT_OF_BOUNDS(cs, pos + len))
+        if (flags & CSTRING_SORT_REST ||  CSTRING_OUT_OF_BOUNDS(cs->len, pos + len))
                 len = cs->len - pos;
 
-        if (CSTRING_FLAG_CHECK(flags, CSTRING_SORT_ASCENDING))
+        if (flags & CSTRING_SORT_ASCENDING)
                 qsort(cs->str + pos, len, sizeof(char), cstring_cmp_char_greater);
-        else if (CSTRING_FLAG_CHECK(flags, CSTRING_SORT_DESCENDING))
+        else if (flags & CSTRING_SORT_DESCENDING)
                 qsort(cs->str + pos, len, sizeof(char), cstring_cmp_char_less);
-        else if (CSTRING_FLAG_CHECK(flags, CSTRING_SORT_CALLBACK))
-                qsort(cs->str + pos, len, sizeof(char), callback);
+        else if (flags & CSTRING_SORT_CALLBACK)
+                qsort(cs->str + pos, len, sizeof(char), cb);
 }
 
 void

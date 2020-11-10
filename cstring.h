@@ -1,5 +1,4 @@
 /* See LICENSE file for copyright and license details. */
-
 #ifndef CSTRING_H
 #define CSTRING_H
 
@@ -13,9 +12,8 @@ extern "C" {
 
 #define CSTRING_NPOS -1
 #define CSTRING_INIT_EMPTY ""
-#define CSTRING_OUT_OF_BOUNDS(cs, val) ((val) > cs->len)
+#define CSTRING_OUT_OF_BOUNDS(len, pos) ((pos) > (len))
 #define CSTRING_ARR_LEN(arr)           ((size_t)sizeof((arr)) / sizeof((arr)[0]))
-#define CSTRING_FLAG_CHECK(flag, bit)  (((flag) & (int)(bit)) == (int)(bit))
 
 #define CSTRING_MALLOC(ptr, size) do {                                       \
         ptr = malloc((size));                                                \
@@ -40,20 +38,17 @@ extern "C" {
         CSTRING_DBG_LOG("S: %s | LEN: %ld\n", (s), (len))
 #endif /* CSTRING_DBG */
 
-struct cstring {
-        size_t    len;
-        size_t    capacity;
-        char     *str;
-};
+typedef struct _cstring {
+        size_t    len;                  /* strlen of str */
+        size_t    capacity;             /* total capacity of the array */
+        char     *str;                  /* the string */
 
-enum cstring_sort_flags {
-        CSTRING_SORT_ASCENDING  = 1 << 0,
-        CSTRING_SORT_DESCENDING = 1 << 1,
-        CSTRING_SORT_CALLBACK   = 1 << 2,
-        CSTRING_SORT_REST       = 1 << 3
-};
+#define CSTRING_SORT_ASCENDING  0x01    /* sort in ascending order */
+#define CSTRING_SORT_DESCENDING 0x02    /* sort in descending order */
+#define CSTRING_SORT_CALLBACK   0x04    /* sort using a callback function */
+#define CSTRING_SORT_REST       0x10    /* sort the rest of the array */
+} cstring;
 
-typedef struct cstring cstring;
 typedef int (*cstring_sort_callback)(const void *, const void *);
 
 extern cstring    cstring_create(const char *);
@@ -70,11 +65,9 @@ extern void       cstring_replace_char(cstring *, size_t, char);
 extern void       cstring_replace_str(cstring *, const char *, size_t, size_t);
 extern cstring    cstring_substr(const cstring *, size_t, size_t);
 extern void       cstring_swap(cstring *, cstring *);
-extern void       cstring_sort_partial(cstring *, size_t, size_t,
-                                       enum cstring_sort_flags,
+extern void       cstring_sort_partial(cstring *, size_t, size_t, int,
                                        cstring_sort_callback);
-extern void       cstring_sort_chars_partial(cstring *cs, size_t, size_t,
-                                             enum cstring_sort_flags,
+extern void       cstring_sort_chars_partial(cstring *cs, size_t, size_t, int,
                                              cstring_sort_callback);
 extern void       cstring_clear(cstring *);
 extern size_t     cstring_find(const cstring *, const char *);
@@ -88,14 +81,11 @@ extern char      *cstring_copy(const char *);
 extern void       cstring_resize(cstring *, size_t);
 extern cstring   *cstring_getline(FILE *, cstring *, char);
 
-
 /* static inlines */
 static inline void    cstring_prepend(cstring *, const char *);
 static inline void    cstring_append(cstring *, const char *);
-static inline void    cstring_sort(cstring *, size_t, enum cstring_sort_flags,
-                                   cstring_sort_callback);
-static inline void    cstring_sort_chars(cstring *, enum cstring_sort_flags,
-                                         cstring_sort_callback);
+static inline void    cstring_sort(cstring *, size_t, int, cstring_sort_callback);
+static inline void    cstring_sort_chars(cstring *, int, cstring_sort_callback);
 static inline void    cstring_shrink_to_fit(cstring *);
 static inline int     cstring_empty(const cstring *);
 static inline char    cstring_front(const cstring *);
@@ -123,20 +113,15 @@ cstring_append(cstring *cs, const char *s)
 }
 
 static inline void
-cstring_sort(cstring *cs,
-             size_t len,
-             enum cstring_sort_flags flags,
-             cstring_sort_callback callback)
+cstring_sort(cstring *cs, size_t len, int flags, cstring_sort_callback cb)
 {
-        cstring_sort_partial(cs, 0, len, flags, callback);
+        cstring_sort_partial(cs, 0, len, flags, cb);
 }
 
 static inline void
-cstring_sort_chars(cstring *cs,
-                   enum cstring_sort_flags flags,
-                   cstring_sort_callback callback)
+cstring_sort_chars(cstring *cs, int flags, cstring_sort_callback cb)
 {
-        cstring_sort_chars_partial(cs, 0, cs->len, flags, callback);
+        cstring_sort_chars_partial(cs, 0, cs->len, flags, cb);
 }
 
 static inline void

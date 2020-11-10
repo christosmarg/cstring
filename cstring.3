@@ -23,26 +23,24 @@ In case you want to run the program in debug mode, compile
 it with the
 .Ar \-DCSTRING_DBG
 option.
-.Sh STRUCTURES AND ENUMS
+.Sh STRUCTURES
 .Bl -tag -width Ds
-.It cstring
-struct cstring {
-        size_t  len;      /* string length */
-        size_t  capacity; /* string capacity */
-        char   *str;      /* contents of string */
+typedef struct _cstring {
+        size_t  len;            /* string length */
+        size_t  capacity;       /* string capacity */
+        char   *str;            /* contents of string */
+
+CSTRING_SORT_ASCENDING  0x01    /* sort in ascending order */
 .br
-};
-.It cstring_sort_flags
-enum cstring_sort_flags {
-        CSTRING_SORT_ASCENDING  = 1 << 0, /* sort in ascending order */
-        CSTRING_SORT_DESCENDING = 1 << 1, /* sort in descending order */
-        CSTRING_SORT_CALLBACK   = 1 << 2, /* use your own sort function */
-        CSTRING_SORT_REST       = 1 << 3  /* sort the rest of the array */
+CSTRING_SORT_DESCENDING 0x02    /* sort in descending order */
 .br
-};
+CSTRING_SORT_CALLBACK   0x04    /* sort using a callback function */
+.br
+CSTRING_SORT_REST       0x10    /* sort the rest of the array */
+.br
+} cstring;
 .Sh TYPEDEFS
 .Bl -tag -width Ds
-.It typedef\ struct\ cstring\ cstring;
 Short typedef for the cstring structure.
 .It typedef\ int\ (*cstring_sort_callback)(const void *, const void *);
 Used in sort functions.
@@ -102,7 +100,7 @@ Extract a substring from current string.
 .It void Fn cstring_swap "cstring *lhs" "cstring *rhs"
 Swap contents of two strings.
 
-.It void Fn cstring_sort "cstring *cs" "size_t len" "enum cstring_sort_flags flags" "cstring_sort_callback callback"
+.It void Fn cstring_sort "cstring *cs" "size_t len" "int flags" "cstring_sort_callback callback"
 Sort an array of cstrings. If you want to use the builtin comparison pass
 .Ar NULL
 in the last argument. In case you want to use your own callback use the
@@ -110,12 +108,12 @@ in the last argument. In case you want to use your own callback use the
 flag and pass your own callback function in the last argument.
 You can also combine flags using the bitwise OR operator.
 
-.It void Fn cstring_sort_partial "cstring *cs" "size_t pos" "size_t len" "enum cstring_sort_flags flags" "cstring_sort_callback callback"
+.It void Fn cstring_sort_partial "cstring *cs" "size_t pos" "size_t len" "int flags" "cstring_sort_callback callback"
 Like
 .Fn cstring_sort
 but for specified part of an array.
 
-.It void Fn cstring_sort_chars "cstring *cs" "enum cstring_sort_flags flags" "cstring_sort_callback callback"
+.It void Fn cstring_sort_chars "cstring *cs" "int flags" "cstring_sort_callback callback"
 Sort a cstring's contents. If you want to use the builtin comparison pass
 .Ar NULL
 in the last argument. In case you want to use your own callback use the
@@ -123,7 +121,7 @@ in the last argument. In case you want to use your own callback use the
 flag and pass your own callback function in the last argument.
 You can also combine flags using the bitwise OR operator.
 
-.It void Fn cstring_sort_chars_partial "cstring *cs" "size_t pos" "size_t len" "enum cstring_sort_flags flags" "cstring_sort_callback callback"
+.It void Fn cstring_sort_chars_partial "cstring *cs" "size_t pos" "size_t len" "int flags" "cstring_sort_callback callback"
 Like
 .Fn cstring_sort_chars
 but for specified part of string.
@@ -214,19 +212,14 @@ Check if lhs <= rhs
 
 .Sh MACROS
 .Bl -tag -width Ds
-.It Fn CSTRING_OUT_OF_BOUNDS "cs" "pos"
+.It Fn CSTRING_OUT_OF_BOUNDS "len" "pos"
 Check if
 .Ar pos
-is out of bounds.
+is out of bounds (pos > len).
 
 .It Fn CSTRING_ARR_LEN "arr"
 Determine an array's length. The macro must be called in the same function
 the array is declared.
-
-.It Fn CSTRING_FLAG_CHECK "flag" "bit"
-Check if a flag is on. This macro is used for checking
-.Ar cstring_sort_flags
-in the implementation, but it can be used everywhere.
 
 .It Fn CSTRING_MALLOC "ptr" "size"
 Allocate memory with error cheking.

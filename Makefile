@@ -26,7 +26,7 @@ ${LIB}: ${OBJ}
 	${AR} ${ARFLAGS} lib${LIB}.a ${OBJ}
 
 .${EXT}.o:
-	${CC} ${CFLAGS} -c $<
+	${CC} -c ${CFLAGS} $<
 
 dist: clean
 	${MKDIR} ${DIST}
