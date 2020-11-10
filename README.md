@@ -99,7 +99,6 @@ Read the `man` page for more detailed info.
 
 * `CSTRING_OUT_OF_BOUNDS`: Check if value is out of bounds.
 * `CSTRING_ARR_LEN`: Determine an array's length. The macro must be called in the same function the array is declared.
-* `CSTRING_FLAG_CHECK`: Check if flag is on.
 * `CSTRING_MALLOC`: Allocate memory with error checking.  
 The following macros can only be used in debug mode
 * `CSTIRNG_DBG_LOG`: Prints a message in the format of `DEBUG: file:line:func(): msg`.
@@ -111,6 +110,13 @@ The following macros can only be used in debug mode
 
 * `CSTRING_NPOS`: Signifies that a pattern hasn't been found inside the string. Its value is -1.
 * `CSTRING_INIT_EMPTY`: Used with `cstring_create` in case the string is to be initiliazed as empty.
+
+## Flags
+
+* `CSTRING_SORT_ASCENDING`: Sort in ascending order.
+* `CSTRING_SORT_DESCENDING`: Sort in descending order.
+* `CSTRING_SORT_CALLBACK`: Sort using a callback function.
+* `CSTRING_SORT_REST`: Sort the rest of the array.
 
 ## Example
 
