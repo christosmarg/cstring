@@ -26,17 +26,17 @@ option.
 .Sh STRUCTURES
 .Bl -tag -width Ds
 typedef struct _cstring {
-        size_t  len;            /* string length */
-        size_t  capacity;       /* string capacity */
-        char   *str;            /* contents of string */
+	size_t	len;		/* string length */
+	size_t	capacity;	/* string capacity */
+	char   *str;		/* contents of string */
 
-CSTRING_SORT_ASCENDING  0x01    /* sort in ascending order */
+CSTRING_SORT_ASCENDING	0x01	/* sort in ascending order */
 .br
-CSTRING_SORT_DESCENDING 0x02    /* sort in descending order */
+CSTRING_SORT_DESCENDING 0x02	/* sort in descending order */
 .br
-CSTRING_SORT_CALLBACK   0x04    /* sort using a callback function */
+CSTRING_SORT_CALLBACK	0x04	/* sort using a callback function */
 .br
-CSTRING_SORT_REST       0x10    /* sort the rest of the array */
+CSTRING_SORT_REST	0x10	/* sort the rest of the array */
 .br
 } cstring;
 .Sh TYPEDEFS

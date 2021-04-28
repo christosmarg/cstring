@@ -11,9 +11,9 @@ all: options ${BINS}
 
 options:
 	@echo "build options:"
-	@echo "CFLAGS   = ${CFLAGS}"
-	@echo "LDFLAGS  = ${LDFLAGS}"
-	@echo "CC       = ${CC}"
+	@echo "CFLAGS	= ${CFLAGS}"
+	@echo "LDFLAGS	= ${LDFLAGS}"
+	@echo "CC	= ${CC}"
 
 run:
 	for bin in ${BINS}; do \

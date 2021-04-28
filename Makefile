@@ -8,24 +8,23 @@ LIB = cstring
 DIST = ${LIB}-${VERSION}
 MAN3 = ${LIB}.3
 
-EXT = c
 SRC = cstring.c
-OBJ = ${SRC:.${EXT}=.o}
+OBJ = ${SRC:.c=.o}
 
 all: options ${LIB}
 
 options:
 	@echo ${LIB} build options:
-	@echo "CFLAGS   = ${CFLAGS}"
-	@echo "LDFLAGS  = ${LDFLAGS}"
-	@echo "ARFLAGS  = ${ARFLAGS}"
-	@echo "CC       = ${CC}"
-	@echo "AR       = ${AR}"
+	@echo "CFLAGS	= ${CFLAGS}"
+	@echo "LDFLAGS	= ${LDFLAGS}"
+	@echo "ARFLAGS	= ${ARFLAGS}"
+	@echo "CC	= ${CC}"
+	@echo "AR	= ${AR}"
 
 ${LIB}: ${OBJ}
 	${AR} ${ARFLAGS} lib${LIB}.a ${OBJ}
 
-.${EXT}.o:
+.c.o:
 	${CC} -c ${CFLAGS} $<
 
 dist: clean
