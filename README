@@ -24,8 +24,6 @@ If you want to uninstall the library do:
 	# sudo make uninstall
 
 A file using `cstring` has to be linked using the `-lcstring` linker flag.  
-In case you want to run your project in debug mode, compile the library using
-the `-DCSTRING_DBG` option.
 
 Usage
 -----
@@ -95,13 +93,6 @@ Macros
 - `CSTRING_OUT_OF_BOUNDS`: Check if value is out of bounds.
 - `CSTRING_ARR_LEN`: Determine an array's length. The macro must be called in the same function the array is declared.
 - `CSTRING_MALLOC`: Allocate memory with error checking.  
-
-The following macros can only be used in debug mode:
-
-- `CSTIRNG_DBG_LOG`: Prints a message in the format of `DEBUG: file:line:func(): msg`.
-- `CSTRING_DBG_LOG_CSTR_INFO`: Prints all the contents of a `cstring` struct. The argument *has* to be a pointer.
-- `CSTRING_DBG_LOG_CSTR_INFO_NPTR`: Like `CSTRING_DBG_LOG_CSTR_INFO` but the argument has to be a non-pointer.
-- `CSTRING_DBG_LOG_STR_INFO`: Print contents of a normal string.
 
 Constants
 ---------

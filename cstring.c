@@ -2,28 +2,16 @@
 #include "cstring.h"
 
 #define CSTRING_EXCEEDS_CAPACITY(len, cap) ((len) >= (cap))
-
-#define CSTRING_FIND_OCCURENCE(cs, s, func) do {	       \
-	char *_found;					       \
-	if ((_found = func(cs->str, (s))) != NULL)	       \
-		return (_found - cs->str);		       \
+#define FIND_OCC(cs, s, f) do {			\
+	char *_found;				\
+	if ((_found = f(cs->str, (s))) != NULL) \
+		return (_found - cs->str);	\
 } while (0)
-
-#ifdef CSTRING_DBG
-#define CSTRING_FREE(cs) do {				       \
-	CSTRING_DBG_LOG("Before CSTRING_FREE: %s\n", cs->str); \
-	if (!cstring_empty(cs))				       \
-		free(cs->str);				       \
-} while (0)
-#else /* !CSTRING_DBG */
-#define CSTRING_FREE(cs) do {				       \
-	if (!cstring_empty(cs))				       \
-		free(cs->str);				       \
-} while (0)
-#endif /* CSTRING_DBG */
 
 /* statics */
 static int cstring_is_one_of(char, const char *);
+static void *emalloc(size_t);
+static void csfree(cstring *);
 static inline int cstring_cmp_greater(const void *, const void *);
 static inline int cstring_cmp_less(const void *, const void *);
 static inline int cstring_cmp_char_greater(const void *, const void *);
@@ -36,6 +24,25 @@ cstring_is_one_of(char c, const char *s)
 		if (*s == c)
 			return 1;
 	return 0;
+}
+
+static void *
+emalloc(size_t nb)
+{
+	void *p;
+
+	if ((p= malloc(nb)) == NULL) {
+		perror("malloc");
+		exit(1);
+	}
+	return p;
+}
+
+static void
+csfree(cstring *cs)
+{
+	if (!cstring_empty(cs))
+		free(cs->str);
 }
 
 static inline int
@@ -70,17 +77,13 @@ cstring_create(const char *s)
 	cs.len = strlen(s);
 	cs.str = cstring_copy(s);
 	cstring_resize(&cs, cs.len << 1);
-#ifdef CSTRING_DBG
-	CSTRING_DBG_LOG_STR_INFO(s, cs.len);
-	CSTRING_DBG_LOG_CSTR_INFO_NPTR(cs);
-#endif /* CSTRING_DBG */
 	return cs;
 }
 
 void
 cstring_delete(cstring *cs)
 {
-	CSTRING_FREE(cs);
+	csfree(cs);
 	cs->str = NULL;
 	cs->len = 0;
 	cs->capacity = 0;
@@ -89,15 +92,11 @@ cstring_delete(cstring *cs)
 void
 cstring_assign(cstring *cs, const char *s)
 {
-	CSTRING_FREE(cs);
+	csfree(cs);
 	cs->str = cstring_copy(s);
 	cs->len = strlen(s);
 	if (CSTRING_EXCEEDS_CAPACITY(cs->len, cs->capacity))
 		cstring_resize(cs, cs->len << 1);
-#ifdef CSTRING_DBG
-	CSTRING_DBG_LOG_STR_INFO(s, cs->len);
-	CSTRING_DBG_LOG_CSTR_INFO(cs);
-#endif /* CSTRING_DBG */
 }
 
 void
@@ -109,38 +108,18 @@ cstring_insert(cstring *cs, const char *s, size_t i)
 	if (!CSTRING_OUT_OF_BOUNDS(cs->len, i) && s != NULL) {
 		slen = strlen(s);
 		newlen = cs->len + slen;
-		CSTRING_MALLOC(tmp, newlen + 1);
+		tmp = emalloc(newlen + 1);
 		memcpy(tmp, cs->str, i);
 		memcpy(tmp + i, s, slen);
 		memcpy(tmp + i + slen, cs->str + i, newlen - slen - i + 1);
-		CSTRING_FREE(cs);
+		csfree(cs);
 		cs->len = newlen;
 		cs->str = tmp;
 		cs->str[cs->len] = '\0';
 		if (CSTRING_EXCEEDS_CAPACITY(newlen, cs->capacity))
 			cstring_resize(cs, newlen << 1);
-#ifdef CSTRING_DBG
-		CSTRING_DBG_LOG_STR_INFO(s, slen);
-		CSTRING_DBG_LOG_CSTR_INFO(cs);
-#endif /* CSTRING_DBG */
 	}
 }
-
-#ifdef CSTRING_DBG
-// FIXME
-#define CSTRING_DBG_EXPECTED_ERASE_STR(cs, pos, len) do {		    \
-	CSTRING_DBG_LOG("%s", "CSTRING_DBG_EXPECTED_ERASE_STR: ");	    \
-	size_t _i;							    \
-	for (_i = 0; _i < (pos); _i++)					    \
-		printf("%c", cs->str[_i]);				    \
-	for (_i = (pos) + (len); _i < cs->len; _i++)			    \
-		printf("%c", cs->str[_i]);				    \
-	printf("\n");							    \
-} while (0)
-
-#define CSTRING_DBG_EXPECTED_ERASE_LEN(cs, len)				    \
-	CSTRING_DBG_LOG("CSTRING_DBG_EXPECTED_ERASE_LEN: %ld\n", cs->len - len)
-#endif /* CSTRING_DBG */
 
 void
 cstring_erase(cstring *cs, size_t pos, size_t len)
@@ -151,23 +130,14 @@ cstring_erase(cstring *cs, size_t pos, size_t len)
 	if (!cstring_empty(cs)
 	&& (!CSTRING_OUT_OF_BOUNDS(cs->len, pos)
 	||  !CSTRING_OUT_OF_BOUNDS(cs->len, len))) {
-#ifdef CSTRING_DBG
-		CSTRING_DBG_LOG("STR: %s | INDEX: %ld | LEN: %ld\n",
-				cs->str, pos, len);
-		CSTRING_DBG_EXPECTED_ERASE_STR(cs, pos, len);
-		CSTRING_DBG_EXPECTED_ERASE_LEN(cs, len);
-#endif /* CSTRING_DBG */
 		newlen = cs->len - len;
-		CSTRING_MALLOC(tmp, newlen + 1);
+		tmp = emalloc(newlen + 1);
 		memcpy(tmp, cs->str, pos);
 		memcpy(tmp + pos, cs->str + pos + len, cs->len - pos - len);
-		CSTRING_FREE(cs); /* Useless check but keep it for consistency */
+		csfree(cs); /* Useless check but keep it for consistency */
 		cs->len = newlen;
 		cs->str = tmp;
 		cs->str[cs->len] = '\0';
-#ifdef CSTRING_DBG
-		CSTRING_DBG_LOG_CSTR_INFO(cs);
-#endif /* CSTRING_DBG */
 	}
 }
 
@@ -201,11 +171,6 @@ cstring_trim(cstring *cs, const char *s)
 		cstring_erase(cs, i, 1);
 }
 
-#ifdef CSTRING_DBG
-#undef CSTRING_DBG_EXPECTED_ERASE_STR
-#undef CSTRING_DBG_EXPECTED_ERASE_LEN
-#endif /* CSTRING_DBG */
-
 void
 cstring_push_back(cstring *cs, char c)
 {
@@ -213,9 +178,6 @@ cstring_push_back(cstring *cs, char c)
 		cstring_resize(cs, cs->len << 1);
 	cs->str[cs->len] = c;
 	cs->str[++cs->len] = '\0';
-#ifdef CSTRING_DBG
-	CSTRING_DBG_LOG_CSTR_INFO(cs);
-#endif /* CSTRING_DBG */
 }
 
 void
@@ -296,8 +258,8 @@ cstring_sort_chars_partial(cstring *cs, size_t pos, size_t len, int flags,
 void
 cstring_clear(cstring *cs)
 {
-	CSTRING_FREE(cs);
-	CSTRING_MALLOC(cs->str, 1);
+	csfree(cs);
+	cs->str = emalloc(1);
 	cs->str[0] = '\0';
 	cs->len = 0;
 	cs->capacity = 0;
@@ -311,7 +273,7 @@ size_t
 cstring_find(const cstring *cs, const char *s)
 {
 	CSTRING_CHECK(cs, s);
-	CSTRING_FIND_OCCURENCE(cs, s, strstr);
+	FIND_OCC(cs, s, strstr);
 	return CSTRING_NPOS;
 }
 
@@ -344,7 +306,7 @@ cstring_find_first_of(const cstring *cs, const char *s)
 {
 	CSTRING_CHECK(cs, s);
 	for (; *s; s++) {
-		CSTRING_FIND_OCCURENCE(cs, *s, strchr);
+		FIND_OCC(cs, *s, strchr);
 	}
 	return CSTRING_NPOS;
 }
@@ -369,7 +331,7 @@ cstring_find_last_of(const cstring *cs, const char *s)
 	CSTRING_CHECK(cs, s);
 	i = *(s + strlen(s));
 	for (; i >= 0; i--) {
-		CSTRING_FIND_OCCURENCE(cs, s[i], strrchr);
+		FIND_OCC(cs, s[i], strrchr);
 	}
 	return CSTRING_NPOS;
 }
@@ -391,7 +353,7 @@ cstring_find_last_not_of(const cstring *cs, const char *s)
 int
 cstring_ends_with_str(const cstring *cs, const char *s)
 {
-	/* avoid cstring_substr */
+	/* TODO: avoid cstring_substr */
 	cstring sub;
 	size_t slen;
 	int found;
@@ -410,9 +372,9 @@ cstring_copy(const char *s)
 	char *tmp;
 
 	len = strlen(s);
-	CSTRING_MALLOC(tmp, len + 1);
+	tmp = emalloc(len + 1);
 	memcpy(tmp, s, len + 1);
-	tmp[len] = '\0'; /* Add \0 in case s didn't have it */
+	tmp[len] = '\0'; /* Add \0 in case `s` didn't have it */
 	return tmp;
 }
 
@@ -421,19 +383,12 @@ cstring_resize(cstring *cs, size_t newcapacity)
 {
 	char *tmp;
 
-#ifdef CSTRING_DBG
-	CSTRING_DBG_LOG("Old capacity: %ld | New capacity: %ld\n",
-			cs->capacity, newcapacity);
-#endif /* CSTRING_DBG */
-	CSTRING_MALLOC(tmp, newcapacity + 1); /* no +1? */
-	memcpy(tmp, cs->str, cs->len + 1);    /* copy \0 too */
-	CSTRING_FREE(cs);
+	tmp = emalloc(newcapacity + 1);
+	memcpy(tmp, cs->str, cs->len + 1);
+	csfree(cs);
 	cs->str = tmp;
 	cs->str[cs->len] = '\0';
 	cs->capacity = newcapacity;
-#ifdef CSTRING_DBG
-	CSTRING_DBG_LOG_CSTR_INFO(cs);
-#endif /* CSTRING_DBG */
 }
 
 cstring *

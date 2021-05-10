@@ -3,9 +3,9 @@
 .POSIX:
 
 BINS = test_basic test_insert
-CC = gcc
+CC = cc
 CFLAGS = -Wall -std=c99 -pedantic -O3
-LDFLAGS = -Llib -lcstring
+LDFLAGS = -Llib -L/usr/local/lib -I/usr/local/include -lcstring
 
 all: options ${BINS}
 

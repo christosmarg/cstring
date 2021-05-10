@@ -4,6 +4,8 @@
 .Nm cstring
 .Nd A simple and lightweight string library for C inspired by C++'s
 STL string class
+.Sh LIBRARY
+C String (-lcstring)
 .Sh SYNOPSIS
 #include <cstring.h>
 .Sh DESCRIPTION
@@ -12,38 +14,42 @@ The
 .Nm
 library offers a lightweight and fast way to manage
 strings with a wide range of useful functions.
-.Pp
-A program using
-.Nm
-has to be linked using the
-.Ar \-lcstring
-option.
-.Pp
-In case you want to run the program in debug mode, compile
-it with the
-.Ar \-DCSTRING_DBG
-option.
-.Sh STRUCTURES
+
 .Bl -tag -width Ds
 typedef struct _cstring {
-	size_t	len;		/* string length */
-	size_t	capacity;	/* string capacity */
-	char   *str;		/* contents of string */
-
-CSTRING_SORT_ASCENDING	0x01	/* sort in ascending order */
-.br
-CSTRING_SORT_DESCENDING 0x02	/* sort in descending order */
-.br
-CSTRING_SORT_CALLBACK	0x04	/* sort using a callback function */
-.br
-CSTRING_SORT_REST	0x10	/* sort the rest of the array */
-.br
+        size_t len;             /* string length */
+        size_t capacity;        /* string capacity */
+        char *str;              /* contents of string */
+CSTRING_SORT_ASCENDING 0x01     /* sort in ascending order */
+CSTRING_SORT_DESCENDING 0x02    /* sort in descending order */
+CSTRING_SORT_CALLBACK 0x04      /* sort using a callback function */
+CSTRING_SORT_REST 0x10          /* sort the rest of the array */
 } cstring;
-.Sh TYPEDEFS
-.Bl -tag -width Ds
-Short typedef for the cstring structure.
+
 .It typedef\ int\ (*cstring_sort_callback)(const void *, const void *);
 Used in sort functions.
+
+.Sh USAGE
+You must
+.Ar always
+call the
+.Fn cstring_create
+and
+.Fn cstring_delete
+functions whenever you want to make a new instance of
+.Ar cstring
+and stop using it respectively, in order to not cause any memory
+leaks.
+.Pp
+The recommended way of initializing an empty string is by doing
+.Ar cstring foo = cstring_create(CSTRING_INIT_EMPTY)
+.Pp
+If a function requires a
+.Ar char *
+you can access the
+.Ar .str
+field and pass it to the function.
+
 .Sh FUNCTIONS
 .Bl -tag -width Ds
 .It void Fn cstring_create "const char *s"
@@ -217,29 +223,12 @@ Check if
 .Ar pos
 is out of bounds (pos > len).
 
-.It Fn CSTRING_ARR_LEN "arr"
+.It Fn CSTRING_ARR_LEN "x"
 Determine an array's length. The macro must be called in the same function
 the array is declared.
 
 .It Fn CSTRING_MALLOC "ptr" "size"
 Allocate memory with error cheking.
-
-.Pp
-The following macros can only be used in debug mode:
-.It Fn CSTRING_DBG_LOG "fmt" "..."
-Prints a message in the format of "DEBUG: file:line:func(): msg".
-
-.It Fn CSTRING_DBG_LOG_CSTR_INFO "cs"
-Print all the contents of a
-.Ar cstring
-struct. The argument has to be a pointer.
-
-.It Fn CSTRING_DBG_LOG_CSTR_INFO_NPTR "cs"
-Like
-.Fn CSTRING_DBG_LOG_CSTR_INFO
-but the argument has to be a non-pointer.
-.It Fn CSTRING_DBG_LOG_STR_INFO "s" "len"
-Print contents of a normal string.
 
 .Sh CONSTANTS
 .Bl -tag -width Ds
@@ -252,25 +241,5 @@ Used with
 .Fn cstring_create
 in case the string is to be initliazed as empty.
 
-.Sh USAGE
-You must
-.Ar always
-call the
-.Fn cstring_create
-and
-.Fn cstring_delete
-functions whenever you want to make a new instance of
-.Ar cstring
-and stop using it respectively, in order to not cause any memory
-leaks.
-.Pp
-The recommended way of initializing an empty string is by doing
-.Ar cstring foo = cstring_create(CSTRING_INIT_EMPTY)
-.Pp
-If a function requires a
-.Ar char *
-you can access the
-.Ar .str
-field and pass it to the function.
 .Sh AUTHORS
 .An Christos Margiolis Aq Mt christos@christosmarg.xyz
