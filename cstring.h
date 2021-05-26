@@ -7,7 +7,7 @@
 #include <string.h>
 
 #ifdef __cplusplus
-extern "C" {
+"C" {
 #endif /* __cplusplus */
 
 #define CSTRING_NPOS -1
@@ -28,33 +28,33 @@ typedef struct _cstring {
 
 typedef int (*cstring_sort_callback)(const void *, const void *);
 
-extern cstring cstring_create(const char *);
-extern void cstring_delete(cstring *);
-extern void cstring_assign(cstring *, const char *);
-extern void cstring_insert(cstring *, const char *, size_t);
-extern void cstring_erase(cstring *, size_t, size_t);
-extern void cstring_erase_matching(cstring *, const char *);
-extern void cstring_erase_all_matching(cstring *, const char *);
-extern void cstring_trim(cstring *, const char *);
-extern void cstring_push_back(cstring *, char);
-extern void cstring_pop_back(cstring *);
-extern void cstring_replace_char(cstring *, size_t, char);
-extern void cstring_replace_str(cstring *, const char *, size_t, size_t);
-extern cstring cstring_substr(const cstring *, size_t, size_t);
-extern void cstring_swap(cstring *, cstring *);
-extern void cstring_sort_partial(cstring *, size_t, size_t, int, cstring_sort_callback);
-extern void cstring_sort_chars_partial(cstring *cs, size_t, size_t, int, cstring_sort_callback);
-extern void cstring_clear(cstring *);
-extern size_t cstring_find(const cstring *, const char *);
-extern size_t cstring_rfind(const cstring *, const char *);
-extern size_t cstring_find_first_of(const cstring *, const char *);
-extern size_t cstring_find_first_not_of(const cstring *,const  char *);
-extern size_t cstring_find_last_of(const cstring *, const char *);
-extern size_t cstring_find_last_not_of(const cstring *, const char *);
-extern int cstring_ends_with_str(const cstring *, const char *);
-extern char *cstring_copy(const char *);
-extern void cstring_resize(cstring *, size_t);
-extern cstring *cstring_getline(FILE *, cstring *, char);
+cstring cstring_create(const char *);
+void cstring_delete(cstring *);
+void cstring_assign(cstring *, const char *);
+void cstring_insert(cstring *, const char *, size_t);
+void cstring_erase(cstring *, size_t, size_t);
+void cstring_erase_matching(cstring *, const char *);
+void cstring_erase_all_matching(cstring *, const char *);
+void cstring_trim(cstring *, const char *);
+void cstring_push_back(cstring *, char);
+void cstring_pop_back(cstring *);
+void cstring_replace_char(cstring *, size_t, char);
+void cstring_replace_str(cstring *, const char *, size_t, size_t);
+cstring cstring_substr(const cstring *, size_t, size_t);
+void cstring_swap(cstring *, cstring *);
+void cstring_sort_partial(cstring *, size_t, size_t, int, cstring_sort_callback);
+void cstring_sort_chars_partial(cstring *cs, size_t, size_t, int, cstring_sort_callback);
+void cstring_clear(cstring *);
+size_t cstring_find(const cstring *, const char *);
+size_t cstring_rfind(const cstring *, const char *);
+size_t cstring_find_first_of(const cstring *, const char *);
+size_t cstring_find_first_not_of(const cstring *,const  char *);
+size_t cstring_find_last_of(const cstring *, const char *);
+size_t cstring_find_last_not_of(const cstring *, const char *);
+int cstring_ends_with_str(const cstring *, const char *);
+char *cstring_copy(const char *);
+void cstring_resize(cstring *, size_t);
+cstring *cstring_getline(FILE *, cstring *, char);
 
 /* static inlines */
 static inline void cstring_prepend(cstring *, const char *);

@@ -8,7 +8,6 @@
 		return (_found - cs->str);	\
 } while (0)
 
-/* statics */
 static int cstring_is_one_of(char, const char *);
 static void *emalloc(size_t);
 static void csfree(cstring *);
@@ -69,7 +68,6 @@ cstring_cmp_char_less(const void *lhs, const void *rhs)
 	return -(*(char *)lhs - *(char *)rhs);
 }
 
-/* externs */
 cstring
 cstring_create(const char *s)
 {
@@ -298,7 +296,7 @@ cstring_rfind(const cstring *cs, const char *s)
 		if (found)
 			idx = i;
 	}
-	return (idx == -1 ? CSTRING_NPOS : idx);
+	return (idx < 0 ? CSTRING_NPOS : idx);
 }
 
 size_t
