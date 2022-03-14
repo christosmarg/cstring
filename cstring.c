@@ -1,4 +1,8 @@
 /* See LICENSE file for copyright and license details. */
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "cstring.h"
 
 #define CSTRING_EXCEEDS_CAPACITY(len, cap) ((len) >= (cap))
@@ -21,8 +25,8 @@ cstring_is_one_of(char c, const char *s)
 {
 	for (; *s; s++)
 		if (*s == c)
-			return 1;
-	return 0;
+			return (1);
+	return (0);
 }
 
 static void *
@@ -34,7 +38,7 @@ emalloc(size_t nb)
 		perror("malloc");
 		exit(1);
 	}
-	return p;
+	return (p);
 }
 
 static void
@@ -47,25 +51,25 @@ csfree(cstring *cs)
 static inline int
 cstring_cmp_greater(const void *lhs, const void *rhs)
 {
-	return cstring_greater((cstring *)lhs, (cstring *)rhs);
+	return (cstring_greater((cstring *)lhs, (cstring *)rhs));
 }
 
 static inline int
 cstring_cmp_less(const void *lhs, const void *rhs)
 {
-	return cstring_less((cstring *)lhs, (cstring *)rhs);
+	return (cstring_less((cstring *)lhs, (cstring *)rhs));
 }
 
 static inline int
 cstring_cmp_char_greater(const void *lhs, const void *rhs)
 {
-	return (*(char *)lhs - *(char *)rhs);
+	return ((*(char *)lhs - *(char *)rhs));
 }
 
 static inline int
 cstring_cmp_char_less(const void *lhs, const void *rhs)
 {
-	return -(*(char *)lhs - *(char *)rhs);
+	return (-(*(char *)lhs - *(char *)rhs));
 }
 
 cstring
@@ -75,7 +79,7 @@ cstring_create(const char *s)
 	cs.len = strlen(s);
 	cs.str = cstring_copy(s);
 	cstring_resize(&cs, cs.len << 1);
-	return cs;
+	return (cs);
 }
 
 void
@@ -207,12 +211,12 @@ cstring_substr(const cstring *cs, size_t pos, size_t len)
 {
 	if (CSTRING_OUT_OF_BOUNDS(cs->len, pos)
 	||  CSTRING_OUT_OF_BOUNDS(cs->len, len))
-		return cstring_create("");
+		return (cstring_create(""));
 	cstring substr = cstring_create(&cs->str[pos]);
 	substr.len = len;
 	substr.str[len] = '\0';
 	cstring_shrink_to_fit(&substr);
-	return substr;
+	return (substr);
 }
 
 void
@@ -265,14 +269,14 @@ cstring_clear(cstring *cs)
 
 #define CSTRING_CHECK(cs, s)		\
 	if (cstring_empty(cs) || !*(s)) \
-		return CSTRING_NPOS
+		return (CSTRING_NPOS)
 
 size_t
 cstring_find(const cstring *cs, const char *s)
 {
 	CSTRING_CHECK(cs, s);
 	FIND_OCC(cs, s, strstr);
-	return CSTRING_NPOS;
+	return (CSTRING_NPOS);
 }
 
 /*SIMPLIFY */
@@ -306,7 +310,7 @@ cstring_find_first_of(const cstring *cs, const char *s)
 	for (; *s; s++) {
 		FIND_OCC(cs, *s, strchr);
 	}
-	return CSTRING_NPOS;
+	return (CSTRING_NPOS);
 }
 
 size_t
@@ -317,8 +321,8 @@ cstring_find_first_not_of(const cstring *cs, const char *s)
 	CSTRING_CHECK(cs, s);
 	for (; i < cs->len; i++)
 		if (!cstring_is_one_of(cs->str[i], s))
-			return i;
-	return CSTRING_NPOS;
+			return (i);
+	return (CSTRING_NPOS);
 }
 
 size_t
@@ -331,7 +335,7 @@ cstring_find_last_of(const cstring *cs, const char *s)
 	for (; i >= 0; i--) {
 		FIND_OCC(cs, s[i], strrchr);
 	}
-	return CSTRING_NPOS;
+	return (CSTRING_NPOS);
 }
 
 size_t
@@ -342,8 +346,8 @@ cstring_find_last_not_of(const cstring *cs, const char *s)
 	CSTRING_CHECK(cs, s);
 	for (; i >= 0; i--)
 		if (!cstring_is_one_of(cs->str[i], s))
-			return i;
-	return CSTRING_NPOS;
+			return (i);
+	return (CSTRING_NPOS);
 }
 
 #undef CSTR_CHECK
@@ -360,7 +364,7 @@ cstring_ends_with_str(const cstring *cs, const char *s)
 	sub = cstring_substr(cs, cs->len - slen, slen);
 	found = !strcmp(sub.str, s);
 	cstring_delete(&sub);
-	return found;
+	return (found);
 }
 
 char *
@@ -373,7 +377,7 @@ cstring_copy(const char *s)
 	tmp = emalloc(len + 1);
 	memcpy(tmp, s, len + 1);
 	tmp[len] = '\0'; /* Add \0 in case `s` didn't have it */
-	return tmp;
+	return (tmp);
 }
 
 void
@@ -401,5 +405,5 @@ cstring_getline(FILE *fd, cstring *cs, char delim)
 		else
 			cstring_push_back(cs, c);
 	}
-	return (c == EOF) ? NULL : cs;
+	return (c == EOF ? NULL : cs);
 }

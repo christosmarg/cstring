@@ -2,10 +2,6 @@
 #ifndef _CSTRING_H_
 #define _CSTRING_H_
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #ifdef __cplusplus
 "C" {
 #endif /* __cplusplus */
@@ -114,7 +110,7 @@ cstring_empty(const cstring *cs)
 static inline char
 cstring_front(const cstring *cs)
 {
-	return cs->str[0];
+	return (cs->str[0]);
 }
 
 static inline char
@@ -131,7 +127,8 @@ cstring_starts_with_str(const cstring *cs, const char *s)
 
 static inline int
 cstring_starts_with_char(const cstring *cs, char c)
-{ return (cs->str[0] == c);
+{
+	return (cs->str[0] == c);
 }
 
 static inline int
@@ -143,7 +140,7 @@ cstring_ends_with_char(const cstring *cs, char c)
 static inline void *
 cstring_data(const cstring *cs)
 {
-	return (void *)cs->str;
+	return ((void *)cs->str);
 }
 
 static inline int

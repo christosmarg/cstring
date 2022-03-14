@@ -1,5 +1,6 @@
 cstring
 =======
+
 A simple and lightweight string library for C inspired by C++'s STL 
 `std::string` (don't laugh) class, but with a few additions/improvements.
 
@@ -21,7 +22,7 @@ In order to make a distribution do:
 
 If you want to uninstall the library do:
 
-	# sudo make uninstall
+	# make uninstall
 
 A file using `cstring` has to be linked using the `-lcstring` linker flag.  
 
@@ -123,3 +124,5 @@ See the test programs in `tests` for more.
 
 	    return 0;
 	}
+
+Report any bugs to <christos@margiolis.net>.

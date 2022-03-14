@@ -57,5 +57,5 @@ main(int argc, char *argv[])
 	if (cstring_empty(&s))
 		puts("cstring_delete: Deleted string.");
 
-	return 0;
+	return (0);
 }
